@@ -25,8 +25,7 @@ service cloud.firestore {
         allow create: if get(/databases/$(database)/documents/invitations/$(invitationId)).data.status == 'published'
           && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 128
           && request.resource.data.status in ['attending', 'declined'];
-        allow read, delete: if signedIn() && (get(/databases/$(database)/documents/invitations/$(invitationId)).data.ownerUid == request.auth.uid || isAdmin());
-        allow update: if false;
+        allow read, delete, update: if signedIn() && (get(/databases/$(database)/documents/invitations/$(invitationId)).data.ownerUid == request.auth.uid || isAdmin());
       }
     }
 
