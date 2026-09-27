@@ -7,7 +7,7 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&family=Amiri:ital,wght@0,400;0,700;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&family=Amiri:ital,wght@0,400;0,700;1,400&family=Great+Vibes&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&family=Dancing+Script:wght@400;600;700&family=Alex+Brush&family=Sacramento&family=Parisienne&family=Pinyon+Script&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -19,7 +19,15 @@
                         serif: ['"Playfair Display"', 'serif'],
                         sans: ['Poppins', 'sans-serif'],
                         arabic: ['Amiri', 'serif'],
-                        cursive: ['"Great Vibes"', 'cursive']
+                        cursive: ['"Great Vibes"', 'cursive'],
+                        cinzel: ['Cinzel', 'serif'],
+                        cormorant: ['"Cormorant Garamond"', 'serif'],
+                        montserrat: ['Montserrat', 'sans-serif'],
+                        dancing: ['"Dancing Script"', 'cursive'],
+                        alex: ['"Alex Brush"', 'cursive'],
+                        sacramento: ['Sacramento', 'cursive'],
+                        parisienne: ['Parisienne', 'cursive'],
+                        pinyon: ['"Pinyon Script"', 'cursive']
                     },
                     colors: { brand: { 50: '#fdf8f6', 100: '#f2e8e5', 500: '#B38A4A', 900: '#4A3825' } }
                 }
@@ -32,6 +40,14 @@
         .font-serif { font-family: 'Playfair Display', serif; }
         .font-arabic { font-family: 'Amiri', serif; }
         .font-cursive { font-family: 'Great Vibes', cursive; }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .font-cormorant { font-family: 'Cormorant Garamond', serif; }
+        .font-montserrat { font-family: 'Montserrat', sans-serif; }
+        .font-dancing { font-family: 'Dancing Script', cursive; }
+        .font-alex { font-family: 'Alex Brush', cursive; }
+        .font-sacramento { font-family: 'Sacramento', cursive; }
+        .font-parisienne { font-family: 'Parisienne', cursive; }
+        .font-pinyon { font-family: 'Pinyon Script', cursive; }
         
         .view-section { display: none; opacity: 0; transition: opacity 0.3s ease; }
         .view-section.active { opacity: 1; display: flex; }
@@ -93,130 +109,7 @@
         }
         #modal-container.details-sidebar-open #modal-footer { display: none; }
 
-        /* Presentation Style Mode CSS overrides */
-        .presentation-mode-scrolling,
-        .presentation-mode-scrolling .rnk-container,
-        .presentation-mode-scrolling .al-root,
-        .presentation-mode-scrolling .bs-content,
-        .presentation-mode-scrolling .em-content,
-        .presentation-mode-scrolling .rg-content,
-        .presentation-mode-scrolling .al-content {
-            overflow-y: visible !important;
-            overflow-x: hidden !important;
-            height: auto !important;
-            min-height: 100% !important;
-        }
 
-        /* Centering slides and content in non-scrolling presentation modes */
-        .presentation-slide {
-            opacity: 0;
-            transform: scale(0.96) translateY(4px);
-            transition: opacity 1000ms cubic-bezier(0.4, 0, 0.2, 1), transform 1000ms cubic-bezier(0.4, 0, 0.2, 1) !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            text-align: center !important;
-            box-sizing: border-box !important;
-        }
-        .presentation-slide.story-active {
-            opacity: 1 !important;
-            transform: scale(1) translateY(0) !important;
-        }
-
-        /* Center-align elements inside non-scrolling slides */
-        .presentation-slide p,
-        .presentation-slide h1,
-        .presentation-slide h2,
-        .presentation-slide h3,
-        .presentation-slide span,
-        .presentation-slide div {
-            text-align: center !important;
-            align-items: center !important;
-            justify-content: center !important;
-        }
-        .presentation-slide > * {
-            margin-left: auto !important;
-            margin-right: auto !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            width: 100% !important;
-        }
-        /* Preserve grids */
-        .presentation-slide .bs-calendar-grid,
-        .presentation-slide .bs-calendar-week,
-        .presentation-slide [data-countdown-date],
-        .presentation-slide .rg-calendar-grid,
-        .presentation-slide .al-calendar-grid {
-            display: grid !important;
-            flex-direction: row !important;
-        }
-
-        /* Staggered Typography Character Wave Reveal */
-        .char-reveal {
-            display: inline-block;
-            opacity: 0;
-            transform: translateY(6px);
-            transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1), transform 600ms cubic-bezier(0.16, 1, 0.3, 1) !important;
-        }
-        .story-active .char-reveal {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
-        }
-
-        .presentation-mode-swipe .bs-content,
-        .presentation-mode-swipe .em-content,
-        .presentation-mode-swipe .rg-content,
-        .presentation-mode-swipe .al-content {
-            display: flex !important;
-            overflow-x: auto !important;
-            scroll-snap-type: x mandatory !important;
-            width: 100% !important;
-            scroll-behavior: smooth !important;
-            padding-bottom: 20px !important;
-        }
-        .presentation-mode-swipe .bs-content > *,
-        .presentation-mode-swipe .em-content > *,
-        .presentation-mode-swipe .rg-content > *,
-        .presentation-mode-swipe .al-content > * {
-            flex-shrink: 0 !important;
-            width: 100% !important;
-            scroll-snap-align: start !important;
-            padding: 16px !important;
-            box-sizing: border-box !important;
-        }
-
-        .presentation-mode-book {
-            background-color: #f5f2eb !important;
-            background-image: radial-gradient(#d1caaf 1px, transparent 0) !important;
-            background-size: 24px 24px !important;
-        }
-        .presentation-mode-book .bs-content,
-        .presentation-mode-book .em-content,
-        .presentation-mode-book .rg-content,
-        .presentation-mode-book .al-content {
-            position: relative !important;
-            border-radius: 16px !important;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15) !important;
-            border-left: 8px solid #c5a880 !important;
-            background-color: #fffbf5 !important;
-            padding: 24px !important;
-        }
-
-        .presentation-mode-video .bs-content > *,
-        .presentation-mode-video .em-content > *,
-        .presentation-mode-video .rg-content > *,
-        .presentation-mode-video .al-content > * {
-            display: none !important;
-        }
-        .presentation-mode-video .bs-content > *.story-active,
-        .presentation-mode-video .em-content > *.story-active,
-        .presentation-mode-video .rg-content > *.story-active,
-        .presentation-mode-video .al-content > *.story-active {
-            display: flex !important;
-        }
     </style>
 </head>
 <body class="antialiased h-[100dvh] w-screen overflow-hidden flex flex-col bg-gray-50">
@@ -302,9 +195,7 @@
                 <button onclick="openInvitationDetails()" class="bg-brand-50 hover:bg-brand-100 text-brand-800 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition active:scale-95">
                     <i class="fa-solid fa-pen-to-square text-brand-500"></i> <span>Invitation details</span>
                 </button>
-                <button onclick="openModal('modal-presentation')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition active:scale-95">
-                    <i class="fa-solid fa-laptop-code text-brand-500"></i> <span class="hidden md:inline">Presentation Mode</span>
-                </button>
+
                 <button onclick="openModal('modal-themes')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition active:scale-95">
                     <i class="fa-solid fa-palette text-brand-500"></i> <span class="hidden md:inline">Theme & BG</span>
                 </button>
@@ -348,7 +239,23 @@
         </nav>
         <main class="max-w-6xl mx-auto px-4 md:px-8 py-8 w-full flex-grow pb-24">
             <div class="mb-6">
-                <input type="text" id="view-all-page-search" placeholder="Search..." oninput="handleViewAllPageSearch(this.value)" class="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 text-sm focus:border-brand-500 outline-none shadow-sm mb-6">
+                <!-- Search & Category Dropdown Row -->
+                <div class="flex flex-col md:flex-row items-stretch md:items-center gap-4 mb-6">
+                    <div class="relative flex-grow">
+                        <input type="text" id="view-all-page-search" placeholder="Search..." oninput="handleViewAllPageSearch(this.value)" class="w-full bg-white border border-gray-200 rounded-2xl pl-12 pr-5 py-4 text-sm focus:border-brand-500 outline-none shadow-sm">
+                        <i class="fa-solid fa-magnifying-glass text-gray-400 absolute left-4.5 top-4.5 text-sm"></i>
+                    </div>
+                    <!-- Dropdown Category filter (Shown only for templates) -->
+                    <div id="view-all-tpl-category-box" class="hidden shrink-0">
+                        <select id="view-all-tpl-category" onchange="handleViewAllPageSearch()" class="bg-white border border-gray-200 rounded-2xl px-5 py-4 text-sm focus:border-brand-500 outline-none shadow-sm font-bold text-gray-700 min-w-[180px]">
+                            <option value="all">All Templates</option>
+                            <option value="single">Single Page</option>
+                            <option value="slide">Slide</option>
+                            <option value="blank">Blank</option>
+                            <option value="others">Others</option>
+                        </select>
+                    </div>
+                </div>
                 <div id="view-all-page-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Dynamic items inserted here -->
                 </div>
@@ -499,10 +406,18 @@
                         <label class="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Font Family</label>
                         <select id="dyn-font" class="w-full text-xs p-2 rounded-lg border border-gray-200 shadow-sm outline-none focus:border-brand-500" onchange="handleStyleChange()">
                             <option value="">Template Default</option>
-                            <option value="'Poppins', sans-serif">Poppins (Modern)</option>
-                            <option value="'Playfair Display', serif">Playfair (Elegant)</option>
-                            <option value="'Amiri', serif">Amiri (Arabic)</option>
-                            <option value="'Great Vibes', cursive">Great Vibes (Cursive)</option>
+                            <option value="'Poppins', sans-serif">Poppins (Modern Sans)</option>
+                            <option value="'Playfair Display', serif">Playfair (Elegant Serif)</option>
+                            <option value="'Amiri', serif">Amiri (Arabic Traditional)</option>
+                            <option value="'Great Vibes', cursive">Great Vibes (Romantic Cursive)</option>
+                            <option value="'Cinzel', serif">Cinzel (Classic Serif)</option>
+                            <option value="'Cormorant Garamond', serif">Cormorant (Luxurious Serif)</option>
+                            <option value="'Montserrat', sans-serif">Montserrat (Clean Minimalist)</option>
+                            <option value="'Dancing Script', cursive">Dancing Script (Beautiful Script)</option>
+                            <option value="'Alex Brush', cursive">Alex Brush (Classic Script)</option>
+                            <option value="'Sacramento', cursive">Sacramento (Thin Script)</option>
+                            <option value="'Parisienne', cursive">Parisienne (Elegant Script)</option>
+                            <option value="'Pinyon Script', cursive">Pinyon Script (Sophisticated Script)</option>
                         </select>
                     </div>
                     <div>
@@ -520,7 +435,16 @@
                 
                 <!-- 1. Couple Modal -->
                 <div id="modal-couple" class="hidden edit-form space-y-4">
-                    <div class="flex items-center justify-between border-b border-gray-100 pb-3"><h4 class="font-bold text-gray-800">Couple details</h4><label class="flex items-center gap-2 text-xs font-semibold text-gray-600"><span>Show</span><input type="checkbox" data-key="showCouple" class="w-4 h-4 rounded text-brand-500" onchange="handleFieldVisibilityToggle(this)"></label></div>
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <h4 class="font-bold text-gray-800">Couple details</h4>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-semibold text-gray-500">Show Section</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" data-key="showCouple" class="sr-only peer" onchange="handleFieldVisibilityToggle(this)">
+                                <div class="w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-500"></div>
+                            </label>
+                        </div>
+                    </div>
                     <div><label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Groom's Name</label>
                     <input type="text" id="ed-groom" placeholder="Enter Groom's Name" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none" oninput="handleEditorInput()"></div>
                     <div><label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Bride's Name</label>
@@ -529,17 +453,33 @@
                     <input type="text" id="ed-couple-initials" placeholder="e.g. G & B (Leave blank to auto-generate)" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none" oninput="handleEditorInput()"></div>
                     
                     <div class="grid grid-cols-2 gap-4 mt-4 border-t border-gray-100 pt-4">
-                        <div class="border border-gray-200 rounded-xl p-3 text-center bg-gray-50 relative overflow-hidden">
-                            <img id="prev-groom-photo" src="" class="w-16 h-16 mx-auto rounded-full object-cover hidden shadow-sm mb-2">
-                            <i class="fa-solid fa-user text-gray-300 text-3xl mb-2 block" id="icon-groom-photo"></i>
-                            <p class="text-[9px] text-gray-400 mb-2">Crop ratio: 1:1 (square)</p><label class="cursor-pointer bg-white border border-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-[10px] font-bold shadow-sm inline-block w-full">Upload Groom Photo
+                        <div class="border border-gray-200 rounded-xl p-3 text-center bg-gray-50 relative overflow-hidden flex flex-col justify-between min-h-[190px]">
+                            <div>
+                                <img id="prev-groom-photo" src="" class="w-16 h-16 mx-auto rounded-full object-cover hidden shadow-sm mb-2">
+                                <i class="fa-solid fa-user text-gray-300 text-3xl mb-2 block" id="icon-groom-photo"></i>
+                                <div class="bg-blue-50 text-blue-800 rounded-lg p-2 text-[10px] text-left leading-normal font-medium border border-blue-100">
+                                    <b class="text-blue-900 block border-b border-blue-200/30 pb-0.5 mb-1">Groom Photo</b>
+                                    Ratio: 1:1 (Square)<br>
+                                    Max Size: 90 KB (Auto-compressed)
+                                </div>
+                            </div>
+                            <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-xl text-[10px] font-bold shadow-sm inline-block w-full transition active:scale-95">
+                                <i class="fa-solid fa-cloud-arrow-up mr-1 text-brand-500"></i> Upload Photo
                                 <input type="file" class="hidden" accept="image/*" onchange="handleImageUpload(this, 'groomPhoto')">
                             </label>
                         </div>
-                        <div class="border border-gray-200 rounded-xl p-3 text-center bg-gray-50 relative overflow-hidden">
-                            <img id="prev-bride-photo" src="" class="w-16 h-16 mx-auto rounded-full object-cover hidden shadow-sm mb-2">
-                            <i class="fa-solid fa-user text-gray-300 text-3xl mb-2 block" id="icon-bride-photo"></i>
-                            <p class="text-[9px] text-gray-400 mb-2">Crop ratio: 1:1 (square)</p><label class="cursor-pointer bg-white border border-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-[10px] font-bold shadow-sm inline-block w-full">Upload Bride Photo
+                        <div class="border border-gray-200 rounded-xl p-3 text-center bg-gray-50 relative overflow-hidden flex flex-col justify-between min-h-[190px]">
+                            <div>
+                                <img id="prev-bride-photo" src="" class="w-16 h-16 mx-auto rounded-full object-cover hidden shadow-sm mb-2">
+                                <i class="fa-solid fa-user text-gray-300 text-3xl mb-2 block" id="icon-bride-photo"></i>
+                                <div class="bg-pink-50 text-pink-800 rounded-lg p-2 text-[10px] text-left leading-normal font-medium border border-pink-100">
+                                    <b class="text-pink-900 block border-b border-pink-200/30 pb-0.5 mb-1">Bride Photo</b>
+                                    Ratio: 1:1 (Square)<br>
+                                    Max Size: 90 KB (Auto-compressed)
+                                </div>
+                            </div>
+                            <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-xl text-[10px] font-bold shadow-sm inline-block w-full transition active:scale-95">
+                                <i class="fa-solid fa-cloud-arrow-up mr-1 text-brand-500"></i> Upload Photo
                                 <input type="file" class="hidden" accept="image/*" onchange="handleImageUpload(this, 'bridePhoto')">
                             </label>
                         </div>
@@ -548,19 +488,52 @@
 
                 <!-- 2. Content/Message Modal -->
                 <div id="modal-content" class="hidden edit-form space-y-4">
-                    <div id="content-field-heading"><label class="flex items-center justify-between text-xs font-bold text-gray-500 mb-1 uppercase">Top Heading <input type="checkbox" data-key="showHeading" class="w-4 h-4 rounded text-brand-500" onchange="handleFieldVisibilityToggle(this)"></label>
-                    <input type="text" id="ed-heading" placeholder="Enter top heading text" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none" oninput="handleEditorInput()"></div>
+                    <div id="content-field-heading">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-xs font-bold text-gray-500 uppercase">Top Heading</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" data-key="showHeading" class="sr-only peer" onchange="handleFieldVisibilityToggle(this)">
+                                <div class="w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-500"></div>
+                            </label>
+                        </div>
+                        <input type="text" id="ed-heading" placeholder="Enter top heading text" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none" oninput="handleEditorInput()">
+                    </div>
                     
-                    <div id="content-field-message"><label class="flex items-center justify-between text-xs font-bold text-gray-500 mb-1 uppercase">Invitation Text <input type="checkbox" data-key="showMessage" class="w-4 h-4 rounded text-brand-500" onchange="handleFieldVisibilityToggle(this)"></label>
-                    <textarea id="ed-message" rows="4" placeholder="Enter your main invitation message here" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none resize-none focus:border-brand-500" oninput="handleEditorInput()"></textarea></div>
+                    <div id="content-field-message">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-xs font-bold text-gray-500 uppercase">Invitation Text</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" data-key="showMessage" class="sr-only peer" onchange="handleFieldVisibilityToggle(this)">
+                                <div class="w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-500"></div>
+                            </label>
+                        </div>
+                        <textarea id="ed-message" rows="4" placeholder="Enter your main invitation message here" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none resize-none focus:border-brand-500" oninput="handleEditorInput()"></textarea>
+                    </div>
                     
-                    <div id="content-field-bismillah" class="hidden"><label class="flex items-center justify-between text-xs font-bold text-gray-500 mb-1 uppercase">Bismillah Text <input type="checkbox" data-key="showBismillah" class="w-4 h-4 rounded text-brand-500" onchange="handleFieldVisibilityToggle(this)"></label>
-                    <input type="text" id="ed-bismillah" placeholder="بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ" class="w-full font-arabic bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-lg text-right focus:border-brand-500 outline-none" oninput="handleEditorInput()"></div>
+                    <div id="content-field-bismillah" class="hidden">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-xs font-bold text-gray-500 uppercase">Bismillah Text</label>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" data-key="showBismillah" class="sr-only peer" onchange="handleFieldVisibilityToggle(this)">
+                                <div class="w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-500"></div>
+                            </label>
+                        </div>
+                        <input type="text" id="ed-bismillah" placeholder="بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ" class="w-full font-arabic bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-lg text-right focus:border-brand-500 outline-none" oninput="handleEditorInput()">
+                    </div>
                 </div>
 
                 <!-- 3. Quran/Verse Modal -->
                 <div id="modal-quran" class="hidden edit-form space-y-4">
-                    <div class="flex items-center justify-between border-b border-gray-100 pb-3"><h4 class="font-bold text-gray-800">Quote or verse</h4><label class="flex items-center gap-2 text-xs font-semibold text-gray-600"><span>Show</span><input type="checkbox" data-key="showQuote" class="w-4 h-4 rounded text-brand-500" onchange="handleFieldVisibilityToggle(this)"></label></div>
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <h4 class="font-bold text-gray-800">Quote or verse</h4>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-semibold text-gray-500">Show Section</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" data-key="showQuote" class="sr-only peer" onchange="handleFieldVisibilityToggle(this)">
+                                <div class="w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-500"></div>
+                            </label>
+                        </div>
+                    </div>
                     <div><label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Arabic Text / Quote</label>
                     <input type="text" id="ed-arabic" placeholder="Enter arabic verse or quote" class="w-full font-arabic bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-lg text-right focus:border-brand-500 outline-none" oninput="handleEditorInput()"></div>
                     <div><label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Translation</label>
@@ -569,7 +542,7 @@
 
                 <!-- 4. Main Event Modal -->
                 <div id="modal-mainEvent" class="hidden edit-form space-y-4">
-                    <div class="flex items-center justify-between border-b border-gray-100 pb-3"><h4 class="font-bold text-gray-800">Event details</h4><label class="flex items-center gap-2 text-xs font-semibold text-gray-600"><span>Show</span><input type="checkbox" data-key="showEvent" class="w-4 h-4 rounded text-brand-500" onchange="handleFieldVisibilityToggle(this)"></label></div>
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-3"><h4 class="font-bold text-gray-800">Event details</h4><div class="flex items-center gap-2"><span class="text-xs font-semibold text-gray-500">Show Section</span><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" data-key="showEvent" class="sr-only peer" onchange="handleFieldVisibilityToggle(this)"><div class="w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-500"></div></label></div></div>
                     <div><label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Event Title</label>
                     <input type="text" id="ed-me-title" placeholder="e.g. Nikah Ceremony" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none" oninput="handleEditorInput()"></div>
                     <div class="grid grid-cols-2 gap-3">
@@ -585,22 +558,34 @@
                     <input type="text" id="ed-me-venue" placeholder="Enter Venue Name" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none" oninput="handleEditorInput()"></div>
                     <div><label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Short Address</label>
                     <input type="text" id="ed-me-address" placeholder="Enter City/Area" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none" oninput="handleEditorInput()"></div>
-                    <div><label class="flex items-center justify-between text-xs font-bold text-gray-500 mb-1 uppercase">Google Maps URL <input type="checkbox" data-key="showMap" class="w-4 h-4 rounded text-brand-500" onchange="handleFieldVisibilityToggle(this)"></label>
+                    <div><div class="flex items-center justify-between mb-1.5"><label class="block text-xs font-bold text-gray-500 uppercase">Google Maps URL</label><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" data-key="showMap" class="sr-only peer" onchange="handleFieldVisibilityToggle(this)"><div class="w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-500"></div></label></div>
                     <input type="url" id="ed-me-map" placeholder="Paste map link here" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-xs focus:border-brand-500 outline-none" oninput="handleEditorInput()"></div>
                     
-                    <div class="border border-gray-200 rounded-xl p-3 text-center bg-gray-50 relative overflow-hidden mt-4">
-                        <img id="prev-venue-image" src="" class="w-24 h-16 mx-auto rounded object-cover hidden shadow-sm mb-2">
-                        <i class="fa-solid fa-hotel text-gray-300 text-3xl mb-2 block" id="icon-venue-image"></i>
-                        <p class="text-[9px] text-gray-400 mb-2">Auditorium / Venue Photo (Landscape)</p>
-                        <label class="cursor-pointer bg-white border border-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-[10px] font-bold shadow-sm inline-block w-full">Upload Venue Photo
-                            <input type="file" class="hidden" accept="image/*" onchange="handleImageUpload(this, 'venueImage')">
-                        </label>
-                        <button id="btn-clear-venue" class="text-red-500 text-[9px] font-bold mt-2 hidden bg-red-50 px-3 py-1 rounded-lg w-full text-center" onclick="clearVenueImage()"><i class="fa-solid fa-trash mr-1"></i> Remove Photo</button>
+                    <div class="border border-gray-200 rounded-xl p-4 text-center bg-gray-50 relative overflow-hidden mt-4 flex flex-col justify-between min-h-[195px]">
+                        <div>
+                            <img id="prev-venue-image" src="" class="w-24 h-16 mx-auto rounded object-cover hidden shadow-sm mb-2">
+                            <i class="fa-solid fa-hotel text-gray-300 text-3xl mb-2 block" id="icon-venue-image"></i>
+                            <div class="bg-amber-50 text-amber-800 rounded-lg p-2.5 mb-2 text-[10px] text-left leading-normal font-medium border border-amber-100">
+                                <b class="text-amber-900 block border-b border-amber-200/30 pb-0.5 mb-1"><i class="fa-solid fa-circle-info mr-1"></i>Venue Photo</b>
+                                Ratio: 16:10 (Landscape)<br>
+                                Max Size: 100 KB (Auto-compressed)
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-xl text-[10px] font-bold shadow-sm inline-block w-full transition active:scale-95">
+                                <i class="fa-solid fa-cloud-arrow-up mr-1 text-brand-500"></i> Upload Venue Photo
+                                <input type="file" class="hidden" accept="image/*" onchange="handleImageUpload(this, 'venueImage')">
+                            </label>
+                            <button id="btn-clear-venue" type="button" class="text-red-500 text-[10px] font-bold hidden bg-red-50 hover:bg-red-100 px-3 py-2 rounded-xl w-full text-center transition active:scale-95" onclick="clearVenueImage()"><i class="fa-solid fa-trash mr-1"></i> Remove Photo</button>
+                        </div>
                     </div>
 
                     <div class="flex items-center justify-between border-t border-gray-100 pt-4 mt-4">
                         <div><h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Guest RSVP</h4><p class="text-[10px] text-gray-400">Let guests confirm their attendance</p></div>
-                        <input type="checkbox" data-key="showRsvp" class="w-4 h-4 rounded text-brand-500" onchange="handleFieldVisibilityToggle(this)">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" data-key="showRsvp" class="sr-only peer" onchange="handleFieldVisibilityToggle(this)">
+                            <div class="w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-500"></div>
+                        </label>
                     </div>
 
                     <!-- RSVP Section (Only visible when showRsvp is enabled) -->
@@ -640,6 +625,44 @@
                             <span class="text-[10px] bg-white text-brand-700 font-bold px-2 py-0.5 rounded-md border border-brand-200 shadow-xs">Layer On</span>
                         </div>
                     </div>
+
+                    <!-- Get Photos Settings Section -->
+                    <div class="border-t border-gray-100 pt-4 mt-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Get Photos</h4>
+                                <p class="text-[10px] text-gray-400">Share celebration photos with guests</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" data-key="showPhotos" class="sr-only peer" onchange="handleFieldVisibilityToggle(this)">
+                                <div class="w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-500"></div>
+                            </label>
+                        </div>
+                        <div id="editor-photos-container" class="hidden space-y-3 bg-brand-50/40 p-4 rounded-xl border border-brand-100/50">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Photos Gallery Link</label>
+                                <input type="url" id="ed-photos-link" placeholder="Paste Google Drive/Photos link here" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-xs focus:border-brand-500 outline-none" oninput="handleEditorInput()">
+                            </div>
+                            <div class="border border-gray-200 rounded-xl p-4 text-center bg-white relative overflow-hidden flex flex-col justify-between min-h-[195px] shadow-sm">
+                                <div>
+                                    <img id="prev-photos-qr" src="" class="w-24 h-24 mx-auto rounded object-contain hidden shadow-sm mb-2">
+                                    <i class="fa-solid fa-qrcode text-gray-300 text-3xl mb-2 block" id="icon-photos-qr"></i>
+                                    <div class="bg-amber-50 text-amber-800 rounded-lg p-2.5 mb-2 text-[10px] text-left leading-normal font-medium border border-amber-100">
+                                        <b class="text-amber-900 block border-b border-amber-200/30 pb-0.5 mb-1"><i class="fa-solid fa-circle-info mr-1"></i>Photos QR Code</b>
+                                        Ratio: 1:1 (Square)<br>
+                                        Max Size: 100 KB (Auto-compressed)
+                                    </div>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="cursor-pointer bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-xl text-[10px] font-bold shadow-sm inline-block w-full transition active:scale-95">
+                                        <i class="fa-solid fa-cloud-arrow-up mr-1 text-brand-500"></i> Upload QR Code
+                                        <input type="file" class="hidden" accept="image/*" onchange="handleImageUpload(this, 'photosQr')">
+                                    </label>
+                                    <button id="btn-clear-photos-qr" type="button" class="text-red-500 text-[10px] font-bold hidden bg-red-50 hover:bg-red-100 px-3 py-2 rounded-xl w-full text-center transition active:scale-95" onclick="clearPhotosQr()"><i class="fa-solid fa-trash mr-1"></i> Remove QR Code</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 5. Themes & BG Modal -->
@@ -663,21 +686,25 @@
                     </div>
                     
                     <div class="border-t border-gray-100 pt-4">
-                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Custom Background Image</h4>
-                        <div class="border border-gray-200 p-3 rounded-xl bg-gray-50 flex items-center justify-between">
-                             <div class="flex items-center gap-3">
-                                 <img id="prev-bg-image" class="h-12 w-12 object-cover rounded border border-gray-300 hidden">
-                                 <div id="no-bg-text" class="text-xs text-gray-400 italic">No image uploaded</div>
+                        <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">Custom Background Image / പശ്ചാത്തല ചിത്രം</h4>
+                        <div class="border border-gray-200 p-4 rounded-2xl bg-gray-50 flex flex-col items-center gap-4 text-center">
+                             <div class="relative w-[100px] aspect-[9/16] rounded-xl overflow-hidden border border-gray-200 shadow-inner flex items-center justify-center bg-gray-100">
+                                 <img id="prev-bg-image" class="absolute inset-0 w-full h-full object-cover hidden">
+                                 <div id="no-bg-text" class="text-[10px] text-gray-400 font-semibold p-2"><i class="fa-regular fa-image text-xl block mb-1 opacity-50"></i>No BG Image</div>
                              </div>
-                             <div class="flex flex-col gap-2">
-                                 <label class="bg-white border border-gray-300 text-gray-700 text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-sm cursor-pointer text-center">
-                                     Upload Image
+                             <div class="flex items-center gap-2 w-full">
+                                 <label class="flex-grow bg-white border border-gray-300 text-gray-700 text-xs font-bold py-2.5 rounded-xl shadow-sm cursor-pointer text-center hover:bg-gray-50 transition active:scale-95">
+                                     <i class="fa-solid fa-cloud-arrow-up mr-1 text-brand-500"></i> Upload Image
                                      <input type="file" class="hidden" accept="image/*" onchange="handleImageUpload(this, 'bgImage')">
                                  </label>
-                                 <button id="btn-clear-bg" class="text-red-500 text-[10px] font-bold hidden bg-red-50 px-3 py-1 rounded-lg" onclick="clearBgImage()"><i class="fa-solid fa-trash mr-1"></i> Remove</button>
+                                 <button id="btn-clear-bg" class="flex-grow text-red-500 text-xs font-bold hidden bg-red-50 hover:bg-red-100 border border-red-100 py-2.5 rounded-xl transition active:scale-95" onclick="clearBgImage()"><i class="fa-solid fa-trash mr-1"></i> Remove</button>
                              </div>
                         </div>
-                        <p class="text-[9px] text-gray-400 mt-2 text-center">Crop ratio: 9:16 (portrait). Image will auto-compress to save data.</p>
+                        <div class="bg-indigo-50 text-indigo-800 rounded-lg p-3 text-[11px] text-left leading-normal font-medium border border-indigo-100 w-full mt-3">
+                            <b class="text-indigo-900 block border-b border-indigo-200/30 pb-1 mb-1.5"><i class="fa-solid fa-circle-info mr-1"></i>Background Image</b>
+                            Ratio: 9:16 (Portrait)<br>
+                            Max Size: 200 KB (Auto-compressed)
+                        </div>
                     </div>
 
                     <div class="text-center pt-6 border-t border-gray-100">
@@ -685,64 +712,25 @@
                     </div>
                 </div>
                 
-                <!-- 8. Presentation Style Selection Modal -->
-                <div id="modal-presentation" class="hidden edit-form space-y-4 text-left">
-                    <p class="text-xs text-gray-500 mb-4 font-medium">How should the invitation be presented to guests? Choose your preferred page navigation model.</p>
-                    
-                    <div class="grid grid-cols-1 gap-3" id="presentation-modes-list">
-                        <!-- Mode 1: Scrolling (Standard Single Page) -->
-                        <div onclick="selectPresentationMode('scrolling')" id="pm-scrolling" class="cursor-pointer p-4 rounded-2xl border-2 transition hover:shadow-md flex items-start gap-4 bg-gray-50 border-gray-200">
-                            <span class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-arrows-up-down text-lg"></i>
-                            </span>
-                            <div class="flex-grow">
-                                <h4 class="font-bold text-gray-900 text-sm flex items-center gap-2">
-                                    Scrolling / Single Page
-                                    <span class="text-[9px] bg-blue-100 text-blue-700 font-bold px-1.5 py-0.5 rounded">Default</span>
-                                </h4>
-                                <p class="text-[10px] text-gray-500 mt-1">A classic, modern vertical scrolling single-page wedding card (Standard layout).</p>
-                            </div>
-                        </div>
 
-                        <!-- Mode 2: Horizontal Slides / Swipe -->
-                        <div onclick="selectPresentationMode('swipe')" id="pm-swipe" class="cursor-pointer p-4 rounded-2xl border-2 transition hover:shadow-md flex items-start gap-4 bg-gray-50 border-gray-200">
-                            <span class="w-10 h-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-left-right text-lg"></i>
-                            </span>
-                            <div class="flex-grow">
-                                <h4 class="font-bold text-gray-900 text-sm">Horizontal Swipe / Slides</h4>
-                                <p class="text-[10px] text-gray-500 mt-1">Slick horizontal sliding layout where visitors swipe or tap left/right to browse.</p>
-                            </div>
-                        </div>
-
-                        <!-- Mode 3: Book Flip Layout -->
-                        <div onclick="selectPresentationMode('book')" id="pm-book" class="cursor-pointer p-4 rounded-2xl border-2 transition hover:shadow-md flex items-start gap-4 bg-gray-50 border-gray-200">
-                            <span class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-book-open text-lg"></i>
-                            </span>
-                            <div class="flex-grow">
-                                <h4 class="font-bold text-gray-900 text-sm">Open Book Layout</h4>
-                                <p class="text-[10px] text-gray-500 mt-1">An extremely elegant interactive booklet page layout with shadow page dividers.</p>
-                            </div>
-                        </div>
-
-                        <!-- Mode 4: Auto-Play Video Story -->
-                        <div onclick="selectPresentationMode('video')" id="pm-video" class="cursor-pointer p-4 rounded-2xl border-2 transition hover:shadow-md flex items-start gap-4 bg-gray-50 border-gray-200">
-                            <span class="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                                <i class="fa-solid fa-circle-play text-lg"></i>
-                            </span>
-                            <div class="flex-grow">
-                                <h4 class="font-bold text-gray-900 text-sm">Auto-Play Video Story</h4>
-                                <p class="text-[10px] text-gray-500 mt-1">A cinematic, story-style auto-playing presentation with timed slides and fades.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- 7. View All Modal (Searchable list) -->
                 <div id="modal-view-all" class="hidden edit-form space-y-4">
-                    <div class="sticky top-0 bg-white pb-2 z-10">
-                        <input type="text" id="view-all-search" placeholder="Search..." oninput="handleViewAllSearch(this.value)" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none">
+                    <div class="sticky top-0 bg-white pb-2 z-10 space-y-3">
+                        <div class="relative w-full">
+                            <input type="text" id="view-all-search" placeholder="Search..." oninput="handleViewAllSearch(this.value)" class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-10 pr-4 py-3 text-sm focus:border-brand-500 outline-none">
+                            <i class="fa-solid fa-magnifying-glass text-gray-400 absolute left-3.5 top-3.5 text-xs"></i>
+                        </div>
+                        <!-- Dropdown Category filter inside modal (Only shown for templates) -->
+                        <div id="modal-view-all-tpl-category-box" class="hidden shrink-0">
+                            <select id="modal-view-all-tpl-category" onchange="handleViewAllSearch(document.getElementById('view-all-search').value)" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none font-bold text-gray-700">
+                                <option value="all">All Templates</option>
+                                <option value="single">Single Page</option>
+                                <option value="slide">Slide</option>
+                                <option value="blank">Blank</option>
+                                <option value="others">Others</option>
+                            </select>
+                        </div>
                     </div>
                     <div id="view-all-list" class="grid grid-cols-1 gap-4">
                         <!-- Populated dynamically -->
@@ -757,14 +745,34 @@
         </div>
     </div>
 
-    <div id="image-crop-modal" class="fixed inset-0 z-[200] bg-black/80 hidden items-center justify-center p-4">
-        <div class="w-full max-w-sm rounded-3xl bg-white p-5 shadow-2xl">
-            <div class="flex items-center justify-between mb-3"><h3 class="font-bold text-gray-800">Crop Image</h3><button onclick="cancelImageCrop()" class="w-8 h-8 rounded-full bg-gray-100"><i class="fa-solid fa-xmark"></i></button></div>
-            <p id="crop-ratio-label" class="text-xs text-gray-500 mb-3"></p>
-            <canvas id="crop-canvas"></canvas>
-            <label class="block text-xs font-bold text-gray-600 mt-4 mb-1">Zoom</label><input id="crop-zoom" type="range" min="1" max="3" value="1" step="0.01" class="w-full" oninput="updateCropZoom(this.value)">
-            <p class="text-[10px] text-gray-400 mt-2">Drag the image to choose the visible area.</p>
-            <button onclick="applyImageCrop()" class="mt-4 w-full rounded-xl bg-brand-500 py-3 font-bold text-white">Use this crop</button>
+    <div id="image-crop-modal" class="fixed inset-0 z-[200] bg-black/80 hidden items-center justify-center p-3 md:p-4">
+        <div class="w-full max-w-sm rounded-3xl bg-white p-5 shadow-2xl flex flex-col max-h-[95dvh] overflow-hidden" id="image-crop-modal-box">
+            <div class="flex items-center justify-between mb-3 shrink-0">
+                <h3 class="font-bold text-gray-900 text-base">Crop Image</h3>
+                <button onclick="cancelImageCrop()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition active:scale-95"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <p id="crop-ratio-label" class="text-xs font-semibold text-gray-500 mb-2 shrink-0"></p>
+            
+            <div class="flex-grow flex items-center justify-center overflow-hidden bg-gray-950 rounded-2xl p-1.5 relative min-h-[120px] max-h-[30vh]">
+                <canvas id="crop-canvas" class="max-w-full max-h-full object-contain rounded-xl shadow-inner cursor-grab active:cursor-grabbing" style="max-height: 30vh;"></canvas>
+            </div>
+            
+            <div class="mt-4 shrink-0 space-y-3">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold text-gray-600 uppercase">Zoom</label>
+                        <span class="text-[10px] text-gray-400 font-bold">Drag to move</span>
+                    </div>
+                    <input id="crop-zoom" type="range" min="1" max="3" value="1" step="0.01" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-500" oninput="updateCropZoom(this.value)">
+                </div>
+                <button onclick="applyImageCrop()" class="w-full rounded-2xl bg-brand-500 hover:bg-brand-600 py-3 px-4 font-bold text-white transition-all active:scale-95 shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-crop-simple text-sm"></i> Use this crop
+                </button>
+                <button onclick="cancelImageCrop()" class="w-full rounded-2xl bg-gray-100 hover:bg-gray-200 py-2.5 px-4 font-bold text-gray-500 text-xs transition-all active:scale-95 text-center">
+                    Cancel
+                </button>
+            </div>
         </div>
     </div>
 
@@ -792,7 +800,7 @@
         try {
             app = initializeApp(firebaseConfig);
             auth = getAuth(app);
-            db = getFirestore(app);
+            db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
         } catch (e) {
             console.error("Firebase init failed:", e);
             showToast("Firebase Config Error.", "error");
@@ -1278,6 +1286,7 @@ END:VCALENDAR`;
         // ================= ROUTING & AUTH =================
         let lastListViewHash = '#dashboard';
         window.goBackFromEditor = function() {
+            if (typeof closeModal === 'function') closeModal();
             window.location.hash = lastListViewHash || '#dashboard';
         };
 
@@ -1495,23 +1504,62 @@ END:VCALENDAR`;
             });
         }
 
-        function renderTemplatesRow() {
+        let currentDashboardTemplateFilter = 'all';
+        window.filterDashboardTemplates = function(filterType) {
+            if (filterType) {
+                currentDashboardTemplateFilter = filterType;
+                // Update active pill styling
+                ['all', 'slides', 'freeform'].forEach(f => {
+                    const btn = document.getElementById(`pill-tpl-${f}`);
+                    if (btn) {
+                        if (f === filterType) {
+                            btn.className = 'text-[10px] font-bold px-3 py-1.5 rounded-lg bg-white text-gray-800 shadow-xs transition';
+                        } else {
+                            btn.className = 'text-[10px] font-bold px-3 py-1.5 rounded-lg text-gray-500 hover:text-gray-800 transition';
+                        }
+                    }
+                });
+            }
+            
+            const queryText = (document.getElementById('tpl-search-input')?.value || '').toLowerCase();
             const row = document.getElementById('templates-row');
+            if (!row) return;
             row.innerHTML = '';
-            const templates = Object.values(state.templates);
+            
+            let templates = Object.values(state.templates);
+            
+            // Filter by type
+            if (currentDashboardTemplateFilter === 'slides') {
+                templates = templates.filter(t => t.scrollable === false);
+            } else if (currentDashboardTemplateFilter === 'freeform') {
+                templates = templates.filter(t => t.freeform === true);
+            }
+            
+            // Filter by search text
+            if (queryText) {
+                templates = templates.filter(t => t.name.toLowerCase().includes(queryText));
+            }
+            
             if (templates.length === 0) {
-                row.innerHTML = `<div class="text-center py-6 w-full text-gray-400 text-sm">No templates available.</div>`;
+                row.innerHTML = `<div class="text-center py-8 w-full text-gray-400 text-xs italic">No templates match search/filter.</div>`;
                 return;
             }
+            
             templates.forEach((t) => {
                 row.innerHTML += `
-                    <div onclick="createNewInvitation('${t.id}')" class="cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg transition-all min-w-[220px] max-w-[220px] shrink-0 snap-start active:scale-95">
-                        <div class="h-32 bg-cover bg-center bg-gray-100" style="background-image: url('${t.thumb}')"></div>
+                    <div onclick="createNewInvitation('${t.id}')" class="cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:border-brand-300 transition-all min-w-[220px] max-w-[220px] shrink-0 snap-start active:scale-95">
+                        <div class="h-32 bg-cover bg-center bg-gray-100 relative" style="background-image: url('${t.thumb}')">
+                            ${t.scrollable === false ? `<span class="absolute top-2 left-2 bg-brand-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider shadow-sm"><i class="fa-solid fa-square-poll-horizontal mr-0.5"></i> Slide</span>` : `<span class="absolute top-2 left-2 bg-gray-600 text-white text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider shadow-sm">Scrolling</span>`}
+                        </div>
                         <div class="p-3 text-center">
                             <h4 class="font-bold text-gray-800 text-sm truncate">${t.name}</h4>
                         </div>
                     </div>`;
             });
+        };
+
+        function renderTemplatesRow() {
+            window.filterDashboardTemplates('all');
         }
 
         // ================= CREATION =================
@@ -1651,392 +1699,12 @@ END:VCALENDAR`;
             }
         };
 
-        let activeStoryInterval = null;
         window.initializePresentationScripts = function(containerElement, mode) {
-            if (activeStoryInterval) {
-                clearInterval(activeStoryInterval);
-                activeStoryInterval = null;
-            }
-
-            // Remove global keydown listener to prevent duplicates
-            if (window.currentPresentationKeyHandler) {
-                window.removeEventListener('keydown', window.currentPresentationKeyHandler);
-                window.currentPresentationKeyHandler = null;
-            }
-
-            // Clean up old controllers/indicators/navigation overlays
-            containerElement.querySelectorAll('.story-overlay, .slides-dots, #nav-instruction-hint').forEach(el => el.remove());
-
-            // Generic search for content container inside any template
-            let content = containerElement.querySelector('.bs-content, .al-shell, .em-content, .rg-content, .al-content, .rnk-container > .relative.z-10, .rnk-container > div, .relative.z-10');
-            if (!content) {
-                const firstChild = containerElement.querySelector('#renderer-output-public > div, #renderer-output-editor > div');
-                if (firstChild) {
-                    content = firstChild.querySelector('.relative.z-10') || firstChild;
-                }
-            }
-            if (!content) return;
-
-            // Restructure direct children into 5 centered, spacious, balanced Slides if mode is not Scrolling
-            if (mode !== 'scrolling') {
-                const existingSlides = content.querySelector('.presentation-slide-container');
-                if (!existingSlides) {
-                    // Collect all valid visible child elements
-                    const children = Array.from(content.children).filter(child => {
-                        return !child.matches('style') && 
-                               !child.matches('.bs-flower') && 
-                               !child.matches('.bs-frame') &&
-                               !child.matches('.rnk-corner') &&
-                               !child.matches('.rnk-border-outer') &&
-                               !child.matches('.rnk-border-inner') &&
-                               !child.matches('.al-noise') &&
-                               !child.matches('.al-glow') &&
-                               !child.matches('.al-orb');
-                    });
-
-                    const s1 = [], s2 = [], s3 = [], s4 = [], s5 = [];
-
-                    children.forEach(el => {
-                        const editType = el.getAttribute('data-edit') || '';
-                        const htmlLower = el.innerHTML.toLowerCase();
-
-                        // Slide 1: Bismillah, Couple, Monogram, Heading
-                        if (editType === 'bismillah' || htmlLower.includes('bismillah') || htmlLower.includes('بِسْمِ')) {
-                            s1.push(el);
-                        } else if (editType === 'couple' || htmlLower.includes('groom') || htmlLower.includes('bride') || htmlLower.includes('initials') || htmlLower.includes('monogram') || htmlLower.includes('portrait') || htmlLower.includes('bs-names') || htmlLower.includes('rnk-card') || htmlLower.includes('al-names')) {
-                            s1.push(el);
-                        } else if (editType === 'heading' || htmlLower.includes('save the date') || htmlLower.includes('invite you') || htmlLower.includes('together with')) {
-                            s1.push(el);
-                        }
-                        // Slide 2: Message & Quran Quote
-                        else if (editType === 'message' || htmlLower.includes('message') || htmlLower.includes('dear beloved') || htmlLower.includes('invite you to share')) {
-                            s2.push(el);
-                        } else if (editType === 'quran' || htmlLower.includes('quote') || htmlLower.includes('arabic') || htmlLower.includes('translation')) {
-                            s2.push(el);
-                        }
-                        // Slide 3: Calendar & Countdown
-                        else if (htmlLower.includes('calendar') || htmlLower.includes('bs-calendar') || htmlLower.includes('al-calendar') || htmlLower.includes('selected-day')) {
-                            s3.push(el);
-                        } else if (editType === 'countdown' || htmlLower.includes('countdown') || htmlLower.includes('wedding-countdown') || htmlLower.includes('cd-days')) {
-                            s3.push(el);
-                        }
-                        // Slide 4: Event & Venue Details, Maps directions, Calendar reminder
-                        else if (editType === 'mainEvent' || editType === 'mainevent' || htmlLower.includes('venue') || htmlLower.includes('directions') || htmlLower.includes('map') || htmlLower.includes('ceremony') || htmlLower.includes('event-title')) {
-                            s4.push(el);
-                        } else if (htmlLower.includes('reminder') || htmlLower.includes('bs-reminder') || htmlLower.includes('rg-reminder') || htmlLower.includes('al-reminder') || htmlLower.includes('addweddingreminder')) {
-                            s4.push(el);
-                        }
-                        // Slide 5: RSVP form, Shower Blessings, Footer
-                        else if (htmlLower.includes('rsvp') || htmlLower.includes('attend') || htmlLower.includes('public-rsvp-form')) {
-                            s5.push(el);
-                        } else if (htmlLower.includes('blessings') || htmlLower.includes('shower blessings') || htmlLower.includes('sparkles') || htmlLower.includes('confetti')) {
-                            s5.push(el);
-                        } else if (htmlLower.includes('footer') || htmlLower.includes('celebration') || htmlLower.includes('designed by') || htmlLower.includes('wedding studio')) {
-                            s5.push(el);
-                        } else {
-                            if (htmlLower.includes('dots') || htmlLower.includes('●')) {
-                                el.remove(); // Clean up decorative separators to save space
-                            } else {
-                                s2.push(el); // default to Slide 2
-                            }
-                        }
-                    });
-
-                    // Clear old child elements from content parent
-                    children.forEach(el => el.remove());
-
-                    // Function to create slide wrappers
-                    const createSlideDiv = (index, elementsList) => {
-                        if (elementsList.length === 0) return null;
-                        const slide = document.createElement('div');
-                        slide.className = `presentation-slide slide-${index} flex flex-col items-center justify-center text-center p-6 w-full min-h-full shrink-0 relative box-border transition-all duration-700`;
-                        slide.style.cssText = "display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; min-height: 100% !important; width: 100% !important; box-sizing: border-box !important;";
-                        elementsList.forEach(el => slide.appendChild(el));
-                        return slide;
-                    };
-
-                    const slidesArray = [
-                        createSlideDiv(1, s1),
-                        createSlideDiv(2, s2),
-                        createSlideDiv(3, s3),
-                        createSlideDiv(4, s4),
-                        createSlideDiv(5, s5)
-                    ].filter(Boolean);
-
-                    const slideContainer = document.createElement('div');
-                    slideContainer.className = 'presentation-slide-container w-full h-full flex relative overflow-hidden';
-                    slideContainer.style.cssText = "display: flex !important; width: 100% !important; height: 100% !important; position: relative !important; overflow: hidden !important; flex-direction: row !important; align-items: center !important; justify-content: center !important;";
-
-                    if (mode === 'swipe') {
-                        slideContainer.style.overflowX = 'auto';
-                        slideContainer.style.scrollSnapType = 'x mandatory';
-                        slideContainer.style.scrollBehavior = 'smooth';
-                        slidesArray.forEach(slide => {
-                            slide.style.scrollSnapAlign = 'start';
-                            slideContainer.appendChild(slide);
-                        });
-                    } else { // 'video' or 'book'
-                        slidesArray.forEach((slide, idx) => {
-                            slide.style.position = 'absolute';
-                            slide.style.inset = '0';
-                            slide.style.opacity = '0';
-                            slide.style.pointerEvents = 'none';
-                            slideContainer.appendChild(slide);
-                        });
-                    }
-                    content.appendChild(slideContainer);
-                }
-            }
-
-            const slideContainer = content.querySelector('.presentation-slide-container');
-            const sections = slideContainer ? Array.from(slideContainer.children) : Array.from(content.children).filter(child => {
-                return !child.matches('style') && !child.matches('.bs-flower') && !child.matches('.bs-frame');
-            });
-            if (sections.length === 0) return;
-
-            // DOM-safe recursive character-by-character wrap for wave typing reveal
-            const wrapTextInSpans = (node) => {
-                if (node.nodeType === Node.TEXT_NODE) {
-                    const text = node.textContent;
-                    if (text.trim() === '') return;
-                    
-                    const fragment = document.createDocumentFragment();
-                    for (let i = 0; i < text.length; i++) {
-                        const char = text.charAt(i);
-                        const span = document.createElement('span');
-                        span.className = 'char-reveal';
-                        // Add staggered transition delays for gorgeous waves
-                        span.style.transitionDelay = `${i * 12}ms`;
-                        span.innerHTML = char === ' ' ? '&nbsp;' : escapeHtml(char);
-                        fragment.appendChild(span);
-                    }
-                    node.parentNode.replaceChild(fragment, node);
-                } else {
-                    const children = Array.from(node.childNodes);
-                    children.forEach(child => {
-                        if (child.nodeType === Node.ELEMENT_NODE) {
-                            if (child.tagName === 'BUTTON' || child.tagName === 'A' || child.classList.contains('no-typewriter') || child.closest('.slides-dots, .story-overlay')) {
-                                return; // Skip buttons and controls
-                            }
-                        }
-                        wrapTextInSpans(child);
-                    });
-                }
-            };
-
-            // Stagger-wrap each slide's leaf nodes if not already done
-            if (mode !== 'scrolling') {
-                sections.forEach(slide => {
-                    if (!slide.dataset.spansWrapped) {
-                        wrapTextInSpans(slide);
-                        slide.dataset.spansWrapped = 'true';
-                    }
-                });
-            }
-
-            sections.forEach(s => s.classList.remove('story-active'));
-
-            let currentIndex = 0;
-
-            const triggerNext = () => {
-                if (mode === 'swipe') {
-                    if (slideContainer) {
-                        const width = slideContainer.clientWidth;
-                        const nextLeft = Math.floor((slideContainer.scrollLeft + width + 5) / width) * width;
-                        if (nextLeft < slideContainer.scrollWidth) {
-                            slideContainer.scrollTo({ left: nextLeft, behavior: 'smooth' });
-                        } else {
-                            slideContainer.scrollTo({ left: 0, behavior: 'smooth' }); // wrap
-                        }
-                    }
-                } else {
-                    clearInterval(activeStoryInterval);
-                    currentIndex = (currentIndex + 1) % sections.length;
-                    showSlide(currentIndex);
-                    if (mode === 'video') {
-                        startVideoTimer();
-                    }
-                }
-            };
-
-            const triggerPrev = () => {
-                if (mode === 'swipe') {
-                    if (slideContainer) {
-                        const width = slideContainer.clientWidth;
-                        const prevLeft = Math.ceil((slideContainer.scrollLeft - width - 5) / width) * width;
-                        if (prevLeft >= 0) {
-                            slideContainer.scrollTo({ left: prevLeft, behavior: 'smooth' });
-                        } else {
-                            slideContainer.scrollTo({ left: slideContainer.scrollWidth - width, behavior: 'smooth' }); // wrap
-                        }
-                    }
-                } else {
-                    clearInterval(activeStoryInterval);
-                    currentIndex = (currentIndex - 1 + sections.length) % sections.length;
-                    showSlide(currentIndex);
-                    if (mode === 'video') {
-                        startVideoTimer();
-                    }
-                }
-            };
-
-            const showSlide = (index) => {
-                sections.forEach((s, idx) => {
-                    const isActive = idx === index;
-                    s.classList.toggle('story-active', isActive);
-
-                    if (mode === 'video' || mode === 'book') {
-                        s.style.pointerEvents = isActive ? 'auto' : 'none';
-                        s.style.opacity = isActive ? '1' : '0';
-                        s.style.transition = 'opacity 1000ms cubic-bezier(0.4, 0, 0.2, 1), transform 1000ms cubic-bezier(0.4, 0, 0.2, 1)';
-                        if (isActive) {
-                            s.style.transform = 'scale(1) translateY(0)';
-                            s.style.zIndex = '20';
-                        } else {
-                            s.style.transform = 'scale(1.04) translateY(-4px)';
-                            s.style.zIndex = '10';
-                        }
-                    }
-
-                    // Progress indicators in video story mode
-                    const prog = document.getElementById(`story-progress-${idx}`);
-                    if (prog) {
-                        prog.style.transition = 'none';
-                        prog.style.width = idx < index ? '100%' : '0%';
-                        if (idx === index) {
-                            setTimeout(() => {
-                                prog.style.transition = 'width 4000ms linear';
-                                prog.style.width = '100%';
-                            }, 50);
-                        }
-                    }
-                });
-            };
-
-            const startVideoTimer = () => {
-                activeStoryInterval = setInterval(() => {
-                    currentIndex = (currentIndex + 1) % sections.length;
-                    showSlide(currentIndex);
-                }, 4000);
-            };
-
-            // Setup navigation listeners depending on Presentation Mode
-            if (mode === 'video') {
-                showSlide(currentIndex);
-                startVideoTimer();
-
-                // Progress indicators bar overlay
-                const progressOverlay = document.createElement('div');
-                progressOverlay.className = 'story-overlay absolute top-4 left-4 right-4 z-[99] flex gap-1.5 px-1';
-                sections.forEach((_, idx) => {
-                    progressOverlay.innerHTML += `
-                        <div class="h-1 flex-grow bg-white/30 rounded-full overflow-hidden shadow-xs">
-                            <div id="story-progress-${idx}" class="h-full bg-white transition-all duration-[4000ms] ease-linear" style="width: 0%"></div>
-                        </div>`;
-                });
-                containerElement.appendChild(progressOverlay);
-            } else if (mode === 'book' || mode === 'swipe') {
-                showSlide(currentIndex);
-            }
-
-            // Unified Desktop / Mobile interaction & Keyboard handling
-            if (mode !== 'scrolling') {
-                // Side arrow navigation buttons
-                const navButtonsOverlay = document.createElement('div');
-                navButtonsOverlay.className = 'story-overlay absolute inset-y-0 inset-x-2.5 z-40 flex items-center justify-between pointer-events-none';
-                navButtonsOverlay.innerHTML = `
-                    <button id="pres-btn-prev" class="w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-md border border-gray-100 flex items-center justify-center text-gray-700 pointer-events-auto transition hover:scale-105 active:scale-95" title="Previous Slide"><i class="fa-solid fa-chevron-left text-xs"></i></button>
-                    <button id="pres-btn-next" class="w-9 h-9 rounded-full bg-white/90 hover:bg-white shadow-md border border-gray-100 flex items-center justify-center text-gray-700 pointer-events-auto transition hover:scale-105 active:scale-95" title="Next Slide"><i class="fa-solid fa-chevron-right text-xs"></i></button>
-                `;
-                containerElement.appendChild(navButtonsOverlay);
-
-                document.getElementById('pres-btn-prev')?.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    triggerPrev();
-                });
-                document.getElementById('pres-btn-next')?.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    triggerNext();
-                });
-
-                // Clear instruction hint overlay
-                const hintOverlay = document.createElement('div');
-                hintOverlay.id = 'nav-instruction-hint';
-                hintOverlay.className = 'absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/75 backdrop-blur-md text-white text-[9px] font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full z-40 transition-opacity duration-1000 flex items-center gap-2 pointer-events-none shadow-lg';
-                hintOverlay.innerHTML = `<i class="fa-solid fa-circle-info text-brand-400"></i> <span>Swipe ↔ or Tap sides. Key: Space, Enter, Arrows</span>`;
-                containerElement.appendChild(hintOverlay);
-
-                setTimeout(() => {
-                    if (hintOverlay) hintOverlay.style.opacity = '0';
-                }, 4000);
-
-                // Unified Click / Tap navigation handler
-                const handleCanvasClick = (e) => {
-                    if (e.target.closest('button, a, input, select, textarea, .editable-block, .edit-badge, .drag-handle, .resize-handle, #pres-btn-prev, #pres-btn-next')) {
-                        return; // Let buttons, inputs, links do their job
-                    }
-                    const rect = containerElement.getBoundingClientRect();
-                    const clickX = e.clientX - rect.left;
-                    const width = rect.width;
-                    if (clickX < width * 0.3) {
-                        triggerPrev();
-                    } else {
-                        triggerNext();
-                    }
-                };
-                containerElement.addEventListener('click', handleCanvasClick);
-
-                // Unified Touch Swipe gestures for Mobile Devices
-                let touchStartX = 0;
-                let touchStartY = 0;
-                const handleTouchStart = (e) => {
-                    touchStartX = e.changedTouches[0].screenX;
-                    touchStartY = e.changedTouches[0].screenY;
-                };
-                const handleTouchEnd = (e) => {
-                    const touchEndX = e.changedTouches[0].screenX;
-                    const touchEndY = e.changedTouches[0].screenY;
-                    const dx = touchEndX - touchStartX;
-                    const dy = touchEndY - touchStartY;
-                    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-                        if (dx > 0) {
-                            triggerPrev();
-                        } else {
-                            triggerNext();
-                        }
-                    }
-                };
-                containerElement.addEventListener('touchstart', handleTouchStart, { passive: true });
-                containerElement.addEventListener('touchend', handleTouchEnd, { passive: true });
-
-                // Keyboard listener support
-                const keyboardHandler = (e) => {
-                    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
-                        e.preventDefault();
-                        triggerNext();
-                    } else if (e.key === 'ArrowLeft') {
-                        e.preventDefault();
-                        triggerPrev();
-                    }
-                };
-
-                window.currentPresentationKeyHandler = keyboardHandler;
-                window.addEventListener('keydown', keyboardHandler);
-            }
+            // Presentation mode features are completely removed. Every template works strictly as a single page scrolling layout.
         };
 
         window.selectPresentationMode = function(mode) {
-            if (!state.data) return;
-            if (!state.data.settings) state.data.settings = {};
-            state.data.settings.presentationMode = mode;
-            
-            bindDataToForms();
-            updateEditorPreview();
-            
-            clearTimeout(state.saveTimeout);
-            if (!state.isNew) {
-                state.saveTimeout = setTimeout(saveToFirestore, 500);
-            }
+            // Ignored - presentation mode is removed
         };
 
         function updateEditorPreview() {
@@ -2048,7 +1716,18 @@ END:VCALENDAR`;
                 const mode = 'scrolling'; // Forced for editing/inputting data on Admin side per request
                 canvas.className = `w-full max-w-[420px] bg-white min-h-[800px] shadow-2xl relative transition-transform duration-300 mx-auto overflow-hidden presentation-mode-${mode}`;
                 canvas.style.overflow = (t.scrollable && mode === 'scrolling') ? 'visible' : 'hidden';
-                container.innerHTML = t.render(state.data, false);
+                
+                let renderOutput = t.render(state.data, false);
+                if (t.scrollable !== false && state.data.settings?.showPhotos) {
+                    renderOutput += `
+                        <div class="w-full py-8 px-4 bg-white/50 backdrop-blur-sm border-t border-black/5 text-center flex flex-col items-center gap-3 shrink-0 mt-auto">
+                            <button onclick="window.openGetPhotosModal('${state.data.photosQr || ''}', '${state.data.photosLink || ''}')" class="px-8 py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition active:scale-95 flex items-center gap-2">
+                                <i class="fa-solid fa-images"></i> Get Photos
+                            </button>
+                        </div>
+                    `;
+                }
+                container.innerHTML = renderOutput;
 
                 // Initialize presentation scripts in forced scrolling mode
                 setTimeout(() => {
@@ -2065,12 +1744,8 @@ END:VCALENDAR`;
                     e.stopPropagation();
                     const editKey = block.getAttribute('data-edit');
                     
-                    let targetModal = 'modal-' + editKey;
-                    if(['bismillah', 'heading', 'message'].includes(editKey)) targetModal = 'modal-content';
-                    if(editKey === 'quran') targetModal = 'modal-quran';
-                    if(editKey === 'mainEvent' || editKey === 'mapBtn' || editKey === 'countdown') targetModal = 'modal-mainEvent';
-                    
-                    openModal(targetModal, editKey);
+                    // Open the unified Details sidebar and scroll directly to this element
+                    openInvitationDetailsAndScrollTo(editKey);
                 };
             });
         }
@@ -2187,14 +1862,33 @@ END:VCALENDAR`;
         // ================= MODALS, STYLES & DATA =================
         window.openModal = function(contentId, blockKey = null) {
             currentEditKey = blockKey;
-            document.getElementById('modal-container').classList.remove('hidden');
+            const modal = document.getElementById('modal-container');
+            modal.classList.remove('hidden');
+            
+            // On desktop, dock edit forms and theme panels to the left sidebar next to the live preview
+            const sidebars = ['modal-couple', 'modal-content', 'modal-quran', 'modal-mainEvent', 'modal-themes'];
+            if (sidebars.includes(contentId)) {
+                modal.classList.add('details-sidebar-open');
+                document.getElementById('view-editor').classList.add('details-sidebar-open');
+            } else {
+                modal.classList.remove('details-sidebar-open');
+                document.getElementById('view-editor').classList.remove('details-sidebar-open');
+            }
+            
             setTimeout(() => { document.getElementById('modal-content-wrapper').classList.remove('translate-y-full'); }, 10);
             document.querySelectorAll('.edit-form').forEach(el => el.classList.add('hidden'));
             
             const target = document.getElementById(contentId);
             if(target) target.classList.remove('hidden');
             
-            const titles = { 'modal-couple': 'Edit Names', 'modal-content': 'Edit Texts', 'modal-quran': 'Edit Verse', 'modal-mainEvent': 'Event Details', 'modal-themes': 'Theme Options', 'modal-presentation': 'Presentation Style', 'modal-view-all': 'View All' };
+            const titles = { 
+                'modal-couple': 'Edit Names', 
+                'modal-content': 'Edit Texts', 
+                'modal-quran': 'Edit Quote or Verse', 
+                'modal-mainEvent': 'Event Details', 
+                'modal-themes': 'Theme & Background', 
+                'modal-view-all': 'View All' 
+            };
             document.getElementById('modal-title').innerText = titles[contentId] || 'Edit';
 
             // Handle Dynamic Style Panel
@@ -2215,6 +1909,9 @@ END:VCALENDAR`;
                 document.getElementById('content-field-message').classList.toggle('hidden', blockKey !== 'message');
                 document.getElementById('content-field-bismillah').classList.toggle('hidden', blockKey !== 'bismillah');
             }
+            
+            bindDataToForms();
+            setupDetailsScrollSync();
         }
 
         window.openInvitationDetails = function() {
@@ -2233,34 +1930,45 @@ END:VCALENDAR`;
             setupDetailsScrollSync();
         }
 
+        window.openInvitationDetailsAndScrollTo = function(editKey) {
+            // Open the entire unified Invitation Details sidebar
+            openInvitationDetails();
+            
+            // Map the block's key to the exact input ID or form container inside the sidebar
+            let targetId = null;
+            if (editKey === 'groom') targetId = 'ed-groom';
+            else if (editKey === 'bride') targetId = 'ed-bride';
+            else if (editKey === 'couple') targetId = 'ed-groom';
+            else if (editKey === 'heading') targetId = 'ed-heading';
+            else if (editKey === 'message') targetId = 'ed-message';
+            else if (editKey === 'bismillah') targetId = 'ed-bismillah';
+            else if (editKey === 'quran') targetId = 'ed-arabic';
+            else if (editKey === 'mainEvent') targetId = 'ed-me-title';
+            else if (editKey === 'mapBtn') targetId = 'ed-me-map';
+            else if (editKey === 'countdown') targetId = 'ed-toggle-countdown';
+            else if (editKey === 'rsvp') targetId = 'editor-rsvp-container';
+            
+            if (targetId) {
+                setTimeout(() => {
+                    const el = document.getElementById(targetId);
+                    if (el) {
+                        // Smoothly scroll the sidebar form container so this specific field is in focus
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        el.focus();
+                        
+                        // Add a beautiful pulsing gold focus border ring
+                        el.classList.add('ring-4', 'ring-brand-500/50', 'transition-all', 'duration-500');
+                        setTimeout(() => {
+                            el.classList.remove('ring-4', 'ring-brand-500/50');
+                        }, 1500);
+                    }
+                }, 150);
+            }
+        }
+
         function setupDetailsScrollSync() {
+            // Scroll synchronization disabled per user request so both the left sidebar forms and right live preview can be scrolled completely independently.
             if (removeDetailsScrollSync) removeDetailsScrollSync();
-            if (!window.matchMedia('(min-width: 1024px)').matches) return;
-
-            const form = document.getElementById('modal-body');
-            const preview = document.getElementById('editor-workspace');
-            if (!form || !preview) return;
-
-            let syncing = false;
-            const syncScroll = (source, target) => {
-                if (syncing) return;
-                const sourceRange = source.scrollHeight - source.clientHeight;
-                const targetRange = target.scrollHeight - target.clientHeight;
-                if (sourceRange <= 0 || targetRange <= 0) return;
-
-                syncing = true;
-                target.scrollTop = (source.scrollTop / sourceRange) * targetRange;
-                requestAnimationFrame(() => { syncing = false; });
-            };
-            const onFormScroll = () => syncScroll(form, preview);
-            const onPreviewScroll = () => syncScroll(preview, form);
-            form.addEventListener('scroll', onFormScroll, { passive: true });
-            preview.addEventListener('scroll', onPreviewScroll, { passive: true });
-            removeDetailsScrollSync = () => {
-                form.removeEventListener('scroll', onFormScroll);
-                preview.removeEventListener('scroll', onPreviewScroll);
-                removeDetailsScrollSync = null;
-            };
         }
 
         window.closeModal = function() {
@@ -2312,7 +2020,11 @@ END:VCALENDAR`;
             
             document.querySelectorAll('[data-key]').forEach(cb => {
                 const key = cb.getAttribute('data-key');
-                cb.checked = d.settings?.[key] !== false;
+                if (key === 'showRsvp' || key === 'showCountdown' || key === 'showPhotos') {
+                    cb.checked = d.settings?.[key] === true;
+                } else {
+                    cb.checked = d.settings?.[key] !== false;
+                }
             });
             
             const t = state.templates[d.templateId] || state.templates['blank-canvas'];
@@ -2380,6 +2092,28 @@ END:VCALENDAR`;
                 document.getElementById('editor-rsvp-container').classList.add('hidden');
             }
 
+            // Get Photos Visibility & Setup in Editor
+            document.getElementById('ed-photos-link').value = d.photosLink || '';
+            const showPhotos = d.settings?.showPhotos === true;
+            const photosContainer = document.getElementById('editor-photos-container');
+            if (photosContainer) {
+                if (showPhotos) {
+                    photosContainer.classList.remove('hidden');
+                } else {
+                    photosContainer.classList.add('hidden');
+                }
+            }
+            if(d.photosQr) {
+                document.getElementById('prev-photos-qr').src = d.photosQr;
+                document.getElementById('prev-photos-qr').classList.remove('hidden');
+                document.getElementById('btn-clear-photos-qr').classList.remove('hidden');
+                document.getElementById('icon-photos-qr').classList.add('hidden');
+            } else {
+                document.getElementById('prev-photos-qr').classList.add('hidden');
+                document.getElementById('btn-clear-photos-qr').classList.add('hidden');
+                document.getElementById('icon-photos-qr').classList.remove('hidden');
+            }
+
             // Countdown Visibility & Setup in Editor
             const isCountdown = d.settings?.showCountdown === true;
             const edCountdownToggle = document.getElementById('ed-toggle-countdown');
@@ -2397,18 +2131,7 @@ END:VCALENDAR`;
                 }
             }
 
-            // Presentation mode card highlighting in selection modal
-            const pMode = d.settings?.presentationMode || 'scrolling';
-            ['scrolling', 'swipe', 'book', 'video'].forEach(m => {
-                const el = document.getElementById(`pm-${m}`);
-                if (el) {
-                    if (m === pMode) {
-                        el.className = "cursor-pointer p-4 rounded-2xl border-2 transition hover:shadow-md flex items-start gap-4 border-brand-500 bg-brand-50/50 ring-2 ring-brand-100";
-                    } else {
-                        el.className = "cursor-pointer p-4 rounded-2xl border-2 transition hover:shadow-md flex items-start gap-4 bg-gray-50 border-gray-200";
-                    }
-                }
-            });
+
         }
 
         window.handleFieldVisibilityToggle = function(cb) {
@@ -2436,6 +2159,8 @@ END:VCALENDAR`;
             state.data.mainEvent.venue = document.getElementById('ed-me-venue').value;
             state.data.mainEvent.address = document.getElementById('ed-me-address').value;
             state.data.mainEvent.mapUrl = document.getElementById('ed-me-map').value;
+
+            state.data.photosLink = document.getElementById('ed-photos-link').value;
 
             state.data.design.colors.primary = document.getElementById('ed-color-primary').value;
             state.data.design.colors.bg = document.getElementById('ed-color-bg').value;
@@ -2554,9 +2279,23 @@ END:VCALENDAR`;
                 output.width = maxWidth; output.height = Math.round(maxWidth / cropState.ratio);
                 output.getContext('2d').drawImage(cropCanvas, 0, 0, output.width, output.height);
                 let quality = 0.85, base64 = output.toDataURL('image/jpeg', quality);
-                while(Math.round((base64.length * 3) / 4 / 1024) > 150 && quality > 0.1) { quality -= 0.1; base64 = output.toDataURL('image/jpeg', quality); }
+                
+                // Configure different compression target file sizes per user request
+                let maxKB = 100;
+                if (cropState.targetField === 'bgImage') {
+                    maxKB = 200;
+                } else if (cropState.targetField === 'groomPhoto' || cropState.targetField === 'bridePhoto') {
+                    maxKB = 90;
+                }
+                
+                while(Math.round((base64.length * 3) / 4 / 1024) > maxKB && quality > 0.1) { 
+                    quality -= 0.1; 
+                    base64 = output.toDataURL('image/jpeg', quality); 
+                }
+                
                 if(cropState.targetField === 'bgImage') state.data.design.bgImage = base64;
                 else if(cropState.targetField === 'venueImage') state.data.mainEvent.venueImage = base64;
+                else if(cropState.targetField === 'photosQr') state.data.photosQr = base64;
                 else state.data.couple[cropState.targetField] = base64;
                 cancelImageCrop(); bindDataToForms(); handleEditorInput(); showToast('Image uploaded!', 'success');
             } catch(e) { showToast('Processing failed', 'error'); } finally { hideLoader(); }
@@ -2564,6 +2303,13 @@ END:VCALENDAR`;
 
         window.clearBgImage = function() {
             state.data.design.bgImage = null;
+            bindDataToForms();
+            handleEditorInput();
+        }
+
+        window.clearPhotosQr = function() {
+            if (!state.data) return;
+            state.data.photosQr = null;
             bindDataToForms();
             handleEditorInput();
         }
@@ -3022,6 +2768,17 @@ END:VCALENDAR`;
         // ================= FULL-PAGE ROUTING LOADERS =================
         window.loadViewAllPage = function(type) {
             document.getElementById('view-all-page-search').value = '';
+            
+            const categoryBox = document.getElementById('view-all-tpl-category-box');
+            if (categoryBox) {
+                if (type === 'templates') {
+                    categoryBox.classList.remove('hidden');
+                    document.getElementById('view-all-tpl-category').value = 'all';
+                } else {
+                    categoryBox.classList.add('hidden');
+                }
+            }
+            
             if (type === 'invitations') {
                 document.getElementById('view-all-title').innerText = 'All Invitations';
                 renderViewAllPageList(allInvitationsCache, 'invitations');
@@ -3032,8 +2789,9 @@ END:VCALENDAR`;
         };
 
         window.handleViewAllPageSearch = function(keyword) {
-            const queryText = keyword.toLowerCase();
+            const queryText = (keyword !== undefined ? keyword : document.getElementById('view-all-page-search').value).toLowerCase();
             const title = document.getElementById('view-all-title').innerText;
+            
             if (title.includes('Invitations')) {
                 const filtered = allInvitationsCache.filter(i => 
                     (i.couple?.groom && i.couple.groom.toLowerCase().includes(queryText)) ||
@@ -3041,13 +2799,40 @@ END:VCALENDAR`;
                 );
                 renderViewAllPageList(filtered, 'invitations');
             } else {
-                const filtered = Object.values(state.templates).filter(t => t.name.toLowerCase().includes(queryText));
+                const category = document.getElementById('view-all-tpl-category').value;
+                let filtered = Object.values(state.templates);
+                
+                // Dropdown Category Classification
+                if (category !== 'all') {
+                    filtered = filtered.filter(t => {
+                        if (category === 'blank') {
+                            return t.id === 'blank-canvas';
+                        }
+                        if (category === 'slide') {
+                            return t.scrollable === false && t.id !== 'blank-canvas';
+                        }
+                        if (category === 'single') {
+                            return t.scrollable !== false && t.id !== 'blank-canvas';
+                        }
+                        if (category === 'others') {
+                            return false;
+                        }
+                        return true;
+                    });
+                }
+                
+                // Search query
+                if (queryText) {
+                    filtered = filtered.filter(t => t.name.toLowerCase().includes(queryText));
+                }
+                
                 renderViewAllPageList(filtered, 'templates');
             }
         };
 
         function renderViewAllPageList(items, type) {
             const list = document.getElementById('view-all-page-list');
+            list.className = type === 'templates' ? "grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
             list.innerHTML = '';
             if (items.length === 0) {
                 list.innerHTML = `<p class="col-span-full text-center text-gray-400 py-12 text-sm">No items found.</p>`;
@@ -3605,6 +3390,48 @@ END:VCALENDAR`;
         window.publicAudio = null;
 
         // ================= PUBLIC & VIEW ALL =================
+        window.openGetPhotosModal = function(qrSrc, galleryLink) {
+            let modal = document.getElementById('get-photos-popup-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'get-photos-popup-modal';
+                modal.className = 'fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden';
+                document.body.appendChild(modal);
+            }
+            modal.innerHTML = `
+                <div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden transform scale-95 opacity-0 transition-all duration-300 flex flex-col text-gray-800" id="get-photos-popup-box">
+                    <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                        <h3 class="font-serif font-bold text-gray-950 text-base">Event Photos</h3>
+                        <button onclick="window.closeGetPhotosModal()" class="w-8 h-8 rounded-full bg-white hover:bg-gray-100 flex items-center justify-center text-gray-500 shadow-sm border border-gray-100 transition"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="p-6 flex flex-col items-center text-center space-y-4">
+                        <p class="text-xs text-gray-500 font-medium">Scan the QR code below or click the button to explore and share event photos.</p>
+                        ${qrSrc ? `<div class="w-44 h-44 bg-gray-50 p-2 rounded-2xl border border-gray-200 flex items-center justify-center shadow-inner"><img src="${qrSrc}" class="w-full h-full object-contain rounded-xl"></div>` : '<div class="text-gray-300 text-5xl py-4"><i class="fa-solid fa-qrcode animate-pulse"></i></div>'}
+                        ${galleryLink ? `<a href="${galleryLink}" target="_blank" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md transition text-xs uppercase tracking-wider"><i class="fa-solid fa-arrow-up-right-from-square"></i> Go to Gallery</a>` : ''}
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                const box = document.getElementById('get-photos-popup-box');
+                box?.classList.remove('scale-95', 'opacity-0');
+                box?.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        };
+        window.closeGetPhotosModal = function() {
+            const modal = document.getElementById('get-photos-popup-modal');
+            const box = document.getElementById('get-photos-popup-box');
+            if (modal && box) {
+                box.classList.remove('scale-100', 'opacity-100');
+                box.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 200);
+            }
+        };
+
         async function loadPublicInvitation(code) {
             showLoader();
             try {
@@ -3617,14 +3444,34 @@ END:VCALENDAR`;
                 const t = state.templates[data.templateId] || state.templates['blank-canvas'];
                 
                 const parent = document.getElementById('renderer-output-public').parentElement;
-                const mode = data.settings?.presentationMode || 'scrolling';
-                parent.className = `w-full max-w-[450px] min-h-[100dvh] bg-white relative flex flex-col shadow-2xl mx-auto ${mode === 'scrolling' ? 'overflow-y-auto' : 'overflow-hidden'} presentation-mode-${mode}`;
-                document.getElementById('renderer-output-public').innerHTML = t.render(data, false);
+                const grandParent = document.getElementById('view-public');
+                
+                if (t.scrollable === false) {
+                    // Non-scrolling slide layouts should occupy 100% viewport and prevent body scrolling
+                    grandParent.className = "view-section absolute inset-0 bg-black flex flex-col items-center justify-center overflow-hidden";
+                    parent.className = "w-full max-w-[480px] h-[100dvh] bg-white relative flex flex-col shadow-2xl mx-auto overflow-hidden";
+                } else {
+                    // Scrolling layouts allow scroll
+                    grandParent.className = "view-section absolute inset-0 bg-black flex-col items-center overflow-y-auto";
+                    parent.className = "w-full max-w-[480px] min-h-[100dvh] bg-white relative flex flex-col shadow-2xl mx-auto overflow-y-auto";
+                }
+                
+                let renderOutput = t.render(data, false);
+                if (t.scrollable !== false && data.settings?.showPhotos) {
+                    renderOutput += `
+                        <div class="w-full py-8 px-4 bg-white/50 backdrop-blur-sm border-t border-black/5 text-center flex flex-col items-center gap-3 shrink-0 mt-auto">
+                            <button onclick="window.openGetPhotosModal('${data.photosQr || ''}', '${data.photosLink || ''}')" class="px-8 py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition active:scale-95 flex items-center gap-2">
+                                <i class="fa-solid fa-images"></i> Get Photos
+                            </button>
+                        </div>
+                    `;
+                }
+                document.getElementById('renderer-output-public').innerHTML = renderOutput;
 
                 // Run public presentation mode script
                 setTimeout(() => {
                     if (window.initializePresentationScripts) {
-                        window.initializePresentationScripts(parent, mode);
+                        window.initializePresentationScripts(parent, 'scrolling');
                     }
                 }, 150);
             } catch (e) { document.getElementById('renderer-output-public').innerHTML = "Error loading."; }
@@ -3634,6 +3481,17 @@ END:VCALENDAR`;
         window.openViewAllModal = function(type) {
             openModal('modal-view-all');
             document.getElementById('view-all-search').value = '';
+            
+            const modalCatBox = document.getElementById('modal-view-all-tpl-category-box');
+            if (modalCatBox) {
+                if(type === 'templates') {
+                    modalCatBox.classList.remove('hidden');
+                    document.getElementById('modal-view-all-tpl-category').value = 'all';
+                } else {
+                    modalCatBox.classList.add('hidden');
+                }
+            }
+
             if(type === 'invitations') {
                 document.getElementById('modal-title').innerText = 'All Invitations';
                 renderViewAllList(allInvitationsCache, 'invitations');
@@ -3644,7 +3502,7 @@ END:VCALENDAR`;
         }
 
         window.handleViewAllSearch = function(keyword) {
-            const queryText = keyword.toLowerCase();
+            const queryText = (keyword !== undefined ? keyword : document.getElementById('view-all-search').value).toLowerCase();
             const title = document.getElementById('modal-title').innerText;
             if(title.includes('Invitations')) {
                 const filtered = allInvitationsCache.filter(i => 
@@ -3653,13 +3511,39 @@ END:VCALENDAR`;
                 );
                 renderViewAllList(filtered, 'invitations');
             } else {
-                const filtered = Object.values(state.templates).filter(t => t.name.toLowerCase().includes(queryText));
+                const categoryElement = document.getElementById('modal-view-all-tpl-category');
+                const category = categoryElement ? categoryElement.value : 'all';
+                let filtered = Object.values(state.templates);
+                
+                // Dropdown Category Classification
+                if (category !== 'all') {
+                    filtered = filtered.filter(t => {
+                        if (category === 'blank') {
+                            return t.id === 'blank-canvas';
+                        }
+                        if (category === 'slide') {
+                            return t.scrollable === false && t.id !== 'blank-canvas';
+                        }
+                        if (category === 'single') {
+                            return t.scrollable !== false && t.id !== 'blank-canvas';
+                        }
+                        if (category === 'others') {
+                            return false;
+                        }
+                        return true;
+                    });
+                }
+                
+                if (queryText) {
+                    filtered = filtered.filter(t => t.name.toLowerCase().includes(queryText));
+                }
                 renderViewAllList(filtered, 'templates');
             }
         }
 
         function renderViewAllList(items, type) {
             const list = document.getElementById('view-all-list');
+            list.className = type === 'templates' ? "grid grid-cols-2 gap-3" : "grid grid-cols-1 gap-4";
             list.innerHTML = '';
             if(items.length === 0) { list.innerHTML = `<p class="text-center text-gray-400 py-6 text-sm">No items found.</p>`; return; }
             items.forEach(data => {

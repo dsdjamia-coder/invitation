@@ -152,8 +152,8 @@ window.registerTemplate({
                 color: ${colors.bg};
             }
         </style>
-        <div class="w-full min-h-[900px] h-full relative p-6 md:p-10 flex flex-col items-center text-center font-sans overflow-hidden" 
-             style="background-color: ${colors.bg}; color: ${colors.text};">
+        <div class="w-full min-h-[900px] h-full relative p-6 md:p-10 flex flex-col items-center text-center font-sans overflow-hidden bg-cover bg-center bg-no-repeat" 
+             style="background-color: ${colors.bg}; color: ${colors.text}; ${d.design?.bgImage ? `background-image: url('${d.design.bgImage}');` : ''}">
             
             <!-- Decorative Outer Border -->
             <div class="absolute inset-4 md:inset-6 border-[3px] rounded-2xl pointer-events-none opacity-60 z-0" 

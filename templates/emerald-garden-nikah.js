@@ -466,7 +466,7 @@ window.registerTemplate({
 
         return `
             ${styles}
-            <div class="rnk-container">
+            <div class="rnk-container bg-cover bg-center bg-no-repeat" style="${d?.design?.bgImage ? `background-image: url('${d.design.bgImage}');` : ''}">
                 <div class="rnk-border-outer"></div>
                 <div class="rnk-border-inner"></div>
                 <div class="rnk-corner rnk-corner-tl"></div>

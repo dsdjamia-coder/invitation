@@ -207,7 +207,7 @@ window.registerTemplate({
 @media(prefers-reduced-motion:reduce){.al-root *,.al-glow,.al-orb{animation:none!important;transition:none!important}}
 </style>
 
-<div class="al-root">
+<div class="al-root bg-cover bg-center bg-no-repeat" style="${d.design?.bgImage ? `background-image: url('${d.design.bgImage}');` : ''}">
     <div class="al-noise"></div><div class="al-glow a"></div><div class="al-glow b"></div><div class="al-orb"></div>
     <div class="al-shell">
         <div class="al-top">

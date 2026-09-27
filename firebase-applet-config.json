@@ -1,9 +1,12 @@
 {
-  "apiKey": "AIzaSyCp-NKbL_kmB2nzlTv9fSisc2cVuE55p-Q",
-  "authDomain": "online-angadi-003.firebaseapp.com",
-  "projectId": "online-angadi-003",
-  "storageBucket": "online-angadi-003.firebasestorage.app",
-  "messagingSenderId": "873906876645",
-  "appId": "1:873906876645:web:a730abef1e07da515f640c",
-  "measurementId": "G-GH1DZXR5ZP"
+  "projectId": "bright-tube-p07pf",
+  "appId": "1:239455260650:web:5c3d61cbd8fcfefccc6c93",
+  "apiKey": "AIzaSyDdUyk_yvZoQ1JI1pPLJTK51U91BVO0XSA",
+  "authDomain": "bright-tube-p07pf.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-invitation-fcbd086e-03b2-4786-81a0-6b6ad0e57e7f",
+  "storageBucket": "bright-tube-p07pf.firebasestorage.app",
+  "messagingSenderId": "239455260650",
+  "measurementId": "",
+  "oAuthClientId": "239455260650-tiv78sn0mu3enppacb6h1u14eaatiukl.apps.googleusercontent.com",
+  "recaptchaSiteKey": ""
 }
