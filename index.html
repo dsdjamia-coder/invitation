@@ -168,11 +168,20 @@
 
             <!-- Templates Section -->
             <div class="mb-6">
-                <div class="flex items-center justify-between mb-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                     <h3 class="text-xl font-bold text-gray-800">Templates</h3>
-                    <button onclick="window.location.hash='#view-all/templates'" class="text-sm font-semibold text-brand-500 hover:text-brand-900 transition flex items-center gap-1">View All <i class="fa-solid fa-arrow-right text-xs"></i></button>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <div class="relative flex-grow sm:w-64 flex items-center">
+                            <i class="fa-solid fa-magnifying-glass text-gray-400 absolute left-3.5 text-xs pointer-events-none"></i>
+                            <input type="text" id="tpl-search-input" placeholder="Search templates..." oninput="filterDashboardTemplates()" class="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-18 py-2 text-xs focus:border-brand-500 outline-none shadow-xs">
+                            <button type="button" onclick="filterDashboardTemplates()" class="absolute right-1.5 px-3 py-1 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-[10px] font-bold transition active:scale-95 shadow-xs">
+                                Search
+                            </button>
+                        </div>
+                        <button onclick="window.location.hash='#view-all/templates'" class="text-xs font-semibold text-brand-500 hover:text-brand-900 transition flex items-center gap-1 shrink-0 whitespace-nowrap">View All <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+                    </div>
                 </div>
-                <div id="templates-row" class="flex gap-6 overflow-x-auto no-scrollbar pb-4 snap-x">
+                <div id="templates-row" class="grid grid-cols-2 gap-3 md:flex md:gap-6 md:overflow-x-auto no-scrollbar pb-2">
                     <!-- Dynamic horizontal templates inserted here -->
                 </div>
             </div>
@@ -240,14 +249,18 @@
         <main class="max-w-6xl mx-auto px-4 md:px-8 py-8 w-full flex-grow pb-24">
             <div class="mb-6">
                 <!-- Search & Category Dropdown Row -->
-                <div class="flex flex-col md:flex-row items-stretch md:items-center gap-4 mb-6">
-                    <div class="relative flex-grow">
-                        <input type="text" id="view-all-page-search" placeholder="Search..." oninput="handleViewAllPageSearch(this.value)" class="w-full bg-white border border-gray-200 rounded-2xl pl-12 pr-5 py-4 text-sm focus:border-brand-500 outline-none shadow-sm">
-                        <i class="fa-solid fa-magnifying-glass text-gray-400 absolute left-4.5 top-4.5 text-sm"></i>
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6">
+                    <div class="relative flex-grow flex items-center">
+                        <i class="fa-solid fa-magnifying-glass text-gray-400 absolute left-4 text-sm pointer-events-none"></i>
+                        <input type="text" id="view-all-page-search" placeholder="Search by name, groom, bride..." onkeyup="if(event.key==='Enter') handleViewAllPageSearch(this.value)" oninput="handleViewAllPageSearch(this.value)" class="w-full bg-white border border-gray-200 rounded-2xl pl-11 pr-24 py-3.5 text-sm focus:border-brand-500 outline-none shadow-sm transition">
+                        <button type="button" onclick="handleViewAllPageSearch(document.getElementById('view-all-page-search').value)" class="absolute right-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-xs font-bold transition active:scale-95 shadow-xs flex items-center gap-1.5">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                            <span>Search</span>
+                        </button>
                     </div>
                     <!-- Dropdown Category filter (Shown only for templates) -->
                     <div id="view-all-tpl-category-box" class="hidden shrink-0">
-                        <select id="view-all-tpl-category" onchange="handleViewAllPageSearch()" class="bg-white border border-gray-200 rounded-2xl px-5 py-4 text-sm focus:border-brand-500 outline-none shadow-sm font-bold text-gray-700 min-w-[180px]">
+                        <select id="view-all-tpl-category" onchange="handleViewAllPageSearch()" class="w-full sm:w-auto bg-white border border-gray-200 rounded-2xl px-4 py-3.5 text-sm focus:border-brand-500 outline-none shadow-sm font-bold text-gray-700">
                             <option value="all">All Templates</option>
                             <option value="single">Single Page</option>
                             <option value="slide">Slide</option>
@@ -686,7 +699,7 @@
                     </div>
                     
                     <div class="border-t border-gray-100 pt-4">
-                        <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">Custom Background Image / പശ്ചാത്തല ചിത്രം</h4>
+                        <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">Custom Background Image</h4>
                         <div class="border border-gray-200 p-4 rounded-2xl bg-gray-50 flex flex-col items-center gap-4 text-center">
                              <div class="relative w-[100px] aspect-[9/16] rounded-xl overflow-hidden border border-gray-200 shadow-inner flex items-center justify-center bg-gray-100">
                                  <img id="prev-bg-image" class="absolute inset-0 w-full h-full object-cover hidden">
@@ -1091,6 +1104,67 @@ END:VCALENDAR`;
             });
         };
 
+        // ================= EVENT PHOTOS POPUP MODAL =================
+        window.openPhotosModal = function(qrUrl, linkUrl) {
+            const existing = document.getElementById('photos-modal-overlay');
+            if (existing) existing.remove();
+
+            const safeQr = (qrUrl && qrUrl !== 'undefined' && qrUrl !== 'null') ? qrUrl : '';
+            const safeLink = (linkUrl && linkUrl !== 'undefined' && linkUrl !== 'null') ? linkUrl : '';
+
+            const overlay = document.createElement('div');
+            overlay.id = 'photos-modal-overlay';
+            overlay.className = 'fixed inset-0 z-[10000] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300';
+            overlay.style.fontFamily = "'Poppins', sans-serif";
+
+            overlay.innerHTML = `
+                <div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden flex flex-col text-gray-800 transform scale-95 opacity-0 transition-all duration-200" id="photos-modal-box">
+                    <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/80">
+                        <div class="flex items-center gap-2">
+                            <span class="w-8 h-8 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center text-sm shadow-xs">
+                                <i class="fa-solid fa-camera-retro"></i>
+                            </span>
+                            <h3 class="font-bold text-gray-900 text-sm">Event Photos</h3>
+                        </div>
+                        <button type="button" onclick="document.getElementById('photos-modal-overlay')?.remove()" class="w-8 h-8 rounded-full bg-white hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 shadow-sm border border-gray-100 transition active:scale-95">
+                            <i class="fa-solid fa-xmark text-sm"></i>
+                        </button>
+                    </div>
+                    <div class="p-6 flex flex-col items-center text-center space-y-4">
+                        <p class="text-xs text-gray-600 leading-relaxed">Scan the QR code below or tap the button to access and share the celebration photo gallery.</p>
+                        ${safeQr ? `
+                        <div class="p-3 bg-white border border-gray-200 rounded-2xl shadow-md w-48 h-48 flex items-center justify-center mx-auto">
+                            <img src="${safeQr}" alt="Photos QR Code" class="w-full h-full object-contain rounded-xl">
+                        </div>
+                        ` : `
+                        <div class="w-44 h-44 rounded-2xl bg-amber-50/50 border border-dashed border-amber-300 flex flex-col items-center justify-center text-amber-600 p-4 mx-auto">
+                            <i class="fa-solid fa-qrcode text-4xl mb-2 opacity-60 animate-pulse"></i>
+                            <span class="text-[11px] font-semibold">QR Code Not Uploaded</span>
+                        </div>
+                        `}
+                        ${safeLink ? `
+                        <a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 text-white font-bold text-xs uppercase tracking-wider shadow-md transition active:scale-95 flex items-center justify-center gap-2 no-underline">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Photo Gallery
+                        </a>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) overlay.remove();
+            });
+
+            requestAnimationFrame(() => {
+                const box = document.getElementById('photos-modal-box');
+                if (box) {
+                    box.classList.remove('scale-95', 'opacity-0');
+                    box.classList.add('scale-100', 'opacity-100');
+                }
+            });
+        };
+
         // ================= TEMPLATE ENGINE & RENDERER =================
         window.registerTemplate = function(templateObj) {
             state.templates[templateObj.id] = templateObj;
@@ -1119,7 +1193,7 @@ END:VCALENDAR`;
                         const script = document.createElement('script');
                         script.src = new URL(file, templatesUrl).href;
                         script.onload = resolve;
-                        script.onerror = resolve; // പിഴവ് വന്നാലും അടുത്തതിലേക്ക് പോകും
+                        script.onerror = resolve; // Continue to next script on error
                         document.head.appendChild(script);
                     });
                 }
@@ -1547,12 +1621,12 @@ END:VCALENDAR`;
             
             templates.forEach((t) => {
                 row.innerHTML += `
-                    <div onclick="createNewInvitation('${t.id}')" class="cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:border-brand-300 transition-all min-w-[220px] max-w-[220px] shrink-0 snap-start active:scale-95">
-                        <div class="h-32 bg-cover bg-center bg-gray-100 relative" style="background-image: url('${t.thumb}')">
+                    <div onclick="createNewInvitation('${t.id}')" class="cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:border-brand-300 transition-all w-full md:min-w-[200px] md:max-w-[200px] shrink-0 active:scale-95">
+                        <div class="h-28 sm:h-32 bg-cover bg-center bg-gray-100 relative" style="background-image: url('${t.thumb}')">
                             ${t.scrollable === false ? `<span class="absolute top-2 left-2 bg-brand-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider shadow-sm"><i class="fa-solid fa-square-poll-horizontal mr-0.5"></i> Slide</span>` : `<span class="absolute top-2 left-2 bg-gray-600 text-white text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider shadow-sm">Scrolling</span>`}
                         </div>
-                        <div class="p-3 text-center">
-                            <h4 class="font-bold text-gray-800 text-sm truncate">${t.name}</h4>
+                        <div class="p-2 sm:p-2.5 text-center">
+                            <h4 class="font-bold text-gray-800 text-xs sm:text-sm truncate">${t.name}</h4>
                         </div>
                     </div>`;
             });
@@ -2832,7 +2906,7 @@ END:VCALENDAR`;
 
         function renderViewAllPageList(items, type) {
             const list = document.getElementById('view-all-page-list');
-            list.className = type === 'templates' ? "grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
+            list.className = type === 'templates' ? "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
             list.innerHTML = '';
             if (items.length === 0) {
                 list.innerHTML = `<p class="col-span-full text-center text-gray-400 py-12 text-sm">No items found.</p>`;
@@ -2869,11 +2943,11 @@ END:VCALENDAR`;
                         </div>`;
                 } else {
                     list.innerHTML += `
-                        <div onclick="createNewInvitation('${data.id}')" class="cursor-pointer bg-white p-5 rounded-3xl flex flex-col gap-4 border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95">
-                            <div class="w-full h-36 rounded-2xl bg-cover bg-center" style="background-image: url('${data.thumb}')"></div>
+                        <div onclick="createNewInvitation('${data.id}')" class="cursor-pointer bg-white p-2.5 sm:p-4 rounded-2xl flex flex-col gap-2 border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95">
+                            <div class="w-full h-28 sm:h-36 rounded-xl bg-cover bg-center" style="background-image: url('${data.thumb}')"></div>
                             <div>
-                                <h4 class="font-bold text-gray-800 text-base">${data.name}</h4>
-                                <p class="text-xs text-brand-500 font-bold mt-1">Use this template <i class="fa-solid fa-arrow-right text-[10px] ml-1"></i></p>
+                                <h4 class="font-bold text-gray-800 text-xs sm:text-sm truncate">${data.name}</h4>
+                                <p class="text-[10px] sm:text-xs text-brand-500 font-bold mt-0.5">Use template <i class="fa-solid fa-arrow-right text-[9px] ml-0.5"></i></p>
                             </div>
                         </div>`;
                 }

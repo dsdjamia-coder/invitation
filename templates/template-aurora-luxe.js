@@ -238,6 +238,13 @@ window.registerTemplate({
         ${editWrap('mainEvent', `<div class="al-event"><div class="al-event-title">${eventTitle}</div><div class="al-date">${date}</div><div class="al-time">${displayTime}</div><div class="al-venue">${venue}</div><div class="al-address">${address}</div>${venueImageHtml}${mapBtnHtml}${reminderBtnHtml}</div>`, 'showEvent')}
         
         ${rsvpHtml}
+        ${(set.showPhotos === true || d?.photosQr || d?.photosLink) ? `
+            <div class="w-full text-center mt-8 mb-6">
+                <button type="button" onclick="window.openPhotosModal('${safe(d?.photosQr || '')}', '${safe(d?.photosLink || '')}')" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg transition active:scale-95 text-white" style="background: ${primary};">
+                    <i class="fa-solid fa-camera-retro text-sm"></i> Get Photos
+                </button>
+            </div>
+        ` : ''}
     </div>
 </div>`;
     }

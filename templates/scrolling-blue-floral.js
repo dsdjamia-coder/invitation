@@ -392,6 +392,13 @@ window.registerTemplate({
             ${edit('mainEvent', `<div class="bs-event"><div class="bs-icon"><i class="fa-solid fa-rings-wedding"></i></div><div><h4>${title}</h4><p><strong>${date} · ${displayTime}</strong><br>${venue}</p></div></div>`, 'showEvent')}
             ${edit('quran', `<div class="bs-quote"><div class="arabic">${arabic}</div><div class="translation">“${translation}”</div></div>`, 'showQuote')}
             ${rsvpHtml}
+            ${(set.showPhotos === true || d?.photosQr || d?.photosLink) ? `
+                <div class="w-full text-center mt-8 mb-6">
+                    <button type="button" onclick="window.openPhotosModal('${escape(d?.photosQr || '')}', '${escape(d?.photosLink || '')}')" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg transition active:scale-95 text-gray-900 bg-white hover:bg-gray-100">
+                        <i class="fa-solid fa-camera-retro text-sm text-blue-600"></i> Get Photos
+                    </button>
+                </div>
+            ` : ''}
         </div></div>`;
     }
 });

@@ -293,6 +293,16 @@ window.registerTemplate({
 
         html += rsvpHtml;
 
+        if (set.showPhotos === true || d?.photosQr || d?.photosLink) {
+            html += `
+                <div class="w-full text-center mt-8 mb-6">
+                    <button type="button" onclick="window.openPhotosModal('${escape(d?.photosQr || '')}', '${escape(d?.photosLink || '')}')" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg transition active:scale-95 text-white" style="background: ${colors.primary};">
+                        <i class="fa-solid fa-camera-retro text-sm"></i> Get Photos
+                    </button>
+                </div>
+            `;
+        }
+
         html += `
             </div>
         </div>`;

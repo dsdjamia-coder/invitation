@@ -66,7 +66,7 @@ window.registerTemplate({
         const displayInitials = d?.couple?.customInitials ? escape(d.couple.customInitials) : defaultInitials;
 
         const invitationMsg = escape(d?.content?.message, 'With immense pleasure, we invite you to share our joy as we unite in marriage.');
-        const arabicQuote = escape(d?.content?.arabicText, 'وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّൻْ أَنفُסِكُمْ أَزْوَاجًا');
+        const arabicQuote = escape(d?.content?.arabicText, 'وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا');
         const translationQuote = escape(d?.content?.translation, '"And among His signs is that He created for you mates that you may find peace in them."');
         const eventTitle = escape(d?.mainEvent?.title, 'Nikah Ceremony');
         

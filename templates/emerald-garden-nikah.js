@@ -486,6 +486,13 @@ window.registerTemplate({
                     ${mainEventSection}
                     ${rsvpHtml}
                     ${blessingActionHtml}
+                    ${(set.showPhotos === true || d?.photosQr || d?.photosLink) ? `
+                        <div class="w-full text-center mt-6 mb-4">
+                            <button type="button" onclick="window.openPhotosModal('${escape(d?.photosQr || '')}', '${escape(d?.photosLink || '')}')" class="rnk-gold-btn inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg active:scale-95">
+                                <i class="fa-solid fa-camera-retro"></i> Get Photos
+                            </button>
+                        </div>
+                    ` : ''}
                     ${footerSection}
                 </div>
             </div>
