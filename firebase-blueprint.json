@@ -1,0 +1,122 @@
+{
+  "entities": {
+    "invitation": {
+      "title": "Invitation",
+      "description": "Digital wedding invitation entity with couple, event, content, and design settings",
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Unique URL slug code for the invitation"
+        },
+        "ownerUid": {
+          "type": "string",
+          "description": "UID of the user who created the invitation"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "published"],
+          "description": "Publication state of the invitation"
+        },
+        "templateId": {
+          "type": "string",
+          "description": "Visual template identifier"
+        },
+        "couple": {
+          "type": "object",
+          "description": "Couple names, parents, photos, and initials"
+        },
+        "mainEvent": {
+          "type": "object",
+          "description": "Event ceremony details, date, time, venue, map"
+        },
+        "content": {
+          "type": "object",
+          "description": "Text headings, invitation message, arabic calligraphy"
+        },
+        "design": {
+          "type": "object",
+          "description": "Colors, fonts, background images, and layout"
+        },
+        "settings": {
+          "type": "object",
+          "description": "Section visibility toggles"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": ["code", "ownerUid", "status", "templateId"]
+    },
+    "rsvp": {
+      "title": "RSVP",
+      "description": "Guest RSVP confirmation for a specific invitation",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Guest full name"
+        },
+        "phone": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Contact phone number"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["attending", "declined"],
+          "description": "RSVP attendance response"
+        },
+        "guestsCount": {
+          "type": "number",
+          "description": "Number of guests attending"
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Optional message or dietary wishes"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Submission timestamp"
+        }
+      },
+      "required": ["name", "status"]
+    },
+    "admin": {
+      "title": "Admin",
+      "description": "Super admin user record whose document ID is the Firebase Auth UID",
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Admin designation timestamp"
+        }
+      }
+    }
+  },
+  "firestore": {
+    "/invitations/{invitationId}": {
+      "schema": "invitation",
+      "description": "Stores user wedding invitations"
+    },
+    "/invitations/{invitationId}/rsvps/{rsvpId}": {
+      "schema": "rsvp",
+      "description": "Stores guest RSVP responses for a specific invitation"
+    },
+    "/admins/{userId}": {
+      "schema": "admin",
+      "description": "Super admin UID records for elevated privileges"
+    }
+  }
+}
