@@ -194,9 +194,9 @@ window.addWeddingReminder = async function(button) {
 
         const ics = `BEGIN:VCALENDAR\r
 VERSION:2.0\r
-PRODID:-//Wedding Studio//Reminder//EN\r
+PRODID:-//Invitation Studio//Reminder//EN\r
 BEGIN:VEVENT\r
-UID:${Date.now()}@wedding-studio\r
+UID:${Date.now()}@invitation-studio\r
 DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}\r
 DTSTART:${startIcs}\r
 DTEND:${endIcs}\r

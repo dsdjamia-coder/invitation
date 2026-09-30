@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Wedding Studio</title>
+    <title>Invitation Studio</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -12,45 +12,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script>
-        // Global Circular-Safe JSON.stringify Interceptor to protect against circular structures
-        (function() {
-            const nativeStringify = JSON.stringify;
-            JSON.stringify = function(value, replacer, space) {
-                const visited = new WeakSet();
-                const safeReplacer = function(key, val) {
-                    if (typeof val === 'object' && val !== null) {
-                        if (visited.has(val)) {
-                            return undefined; // Omit circular references gracefully
-                        }
-                        visited.add(val);
-                        // Sanitize Firestore Sentinels or DOM references
-                        if (val._methodName === 'serverTimestamp') {
-                            return new Date().toISOString();
-                        }
-                        if (typeof Node !== 'undefined' && val instanceof Node) {
-                            return undefined;
-                        }
-                        if (typeof Window !== 'undefined' && val instanceof Window) {
-                            return undefined;
-                        }
-                    }
-                    if (typeof replacer === 'function') {
-                        return replacer.call(this, key, val);
-                    }
-                    return val;
-                };
-                try {
-                    return nativeStringify(value, safeReplacer, space);
-                } catch (e) {
-                    try {
-                        return nativeStringify(String(value));
-                    } catch (_) {
-                        return '"{}"';
-                    }
-                }
-            };
-        })();
-
         tailwind.config = {
             theme: {
                 extend: {
@@ -148,13 +109,31 @@
         }
         #modal-container.details-sidebar-open #modal-footer { display: none; }
 
+        /* Premium Fade-in and slide-up animation for public invitations */
+        #view-public .w-full.max-w-\[450px\] {
+            transform: translateY(24px);
+            opacity: 0;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+        }
+        #view-public.active .w-full.max-w-\[450px\] {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
 
     </style>
 </head>
 <body class="antialiased h-[100dvh] w-screen overflow-hidden flex flex-col bg-gray-50">
 
     <div id="global-loader" class="fixed inset-0 bg-white/95 z-[9999] flex flex-col items-center justify-center hidden backdrop-blur-md transition-opacity">
-        <div class="loader w-14 h-14 border-4 mb-4"></div>
+        <div class="relative w-20 h-20 mb-4 flex items-center justify-center">
+            <!-- Pulsing outer ring -->
+            <div class="absolute inset-0 rounded-full border-2 border-brand-500/20 animate-ping opacity-75"></div>
+            <!-- Rotating/pulsing logo container -->
+            <div class="w-16 h-16 rounded-full bg-white border border-gray-100 shadow-md p-1 flex items-center justify-center overflow-hidden animate-pulse">
+                <img src="assets/logo.svg" class="w-full h-full object-cover" alt="Loading Logo">
+            </div>
+        </div>
         <p class="text-gray-800 font-medium tracking-wide text-lg" id="loader-text">Loading...</p>
     </div>
     <div id="toast-container"></div>
@@ -163,32 +142,20 @@
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
         <div class="relative z-10 max-w-md w-full px-6 flex flex-col items-center justify-center h-full">
             <div class="bg-white/95 backdrop-blur-md p-8 sm:p-10 rounded-3xl shadow-2xl text-center border border-white/20 w-full">
-                <div class="w-20 h-20 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-                    <i class="fa-solid fa-rings-wedding text-4xl text-brand-500"></i>
+                <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md overflow-hidden bg-white border border-gray-100">
+                    <img src="assets/logo.svg" class="w-full h-full object-cover" alt="Invitation Studio Logo">
                 </div>
-                <h1 class="text-3xl sm:text-4xl font-serif font-bold text-gray-900 mb-2">Wedding Studio</h1>
-                <p class="text-gray-500 mb-8 text-sm">Create your perfect digital invitation</p>
-
-                <div class="space-y-3">
-                    <button id="btn-google-login" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 text-gray-800 py-3.5 px-4 rounded-xl hover:bg-gray-50 hover:shadow-md transition-all font-semibold active:scale-[0.98] text-sm shadow-xs">
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google"> Continue with Google
-                    </button>
-                    
-                    <div class="relative flex items-center justify-center my-1.5">
-                        <div class="border-t border-gray-200 w-full"></div>
-                        <span class="bg-white px-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest absolute">or</span>
-                    </div>
-
-                    <button id="btn-quick-login" onclick="quickStudioLogin()" class="w-full flex items-center justify-center gap-2.5 bg-gradient-to-r from-brand-600 via-amber-600 to-brand-700 hover:opacity-95 text-white py-3.5 px-4 rounded-xl shadow-md hover:shadow-lg transition-all font-semibold active:scale-[0.98] text-sm">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> <span id="quick-login-label">Continue to Studio</span>
-                    </button>
-                </div>
-
-                <div class="mt-6 pt-4 border-t border-gray-100 text-[11px] text-gray-500 text-center leading-relaxed">
-                    By signing in, you agree to our 
-                    <button type="button" onclick="openLegalModal('terms')" class="text-brand-600 hover:underline font-semibold">Terms</button>, 
-                    <button type="button" onclick="openLegalModal('privacy')" class="text-brand-600 hover:underline font-semibold">Privacy Policy</button>, and 
-                    <button type="button" onclick="openLegalModal('cookies')" class="text-brand-600 hover:underline font-semibold">Cookies Policy</button>.
+                <h1 class="text-3xl sm:text-4xl font-serif font-bold text-gray-900 mb-2">Invitation Studio</h1>
+                <p class="text-gray-500 mb-10 text-sm">Create your perfect digital invitation</p>
+                <button id="btn-google-login" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-200 text-gray-800 py-4 px-4 rounded-xl hover:bg-gray-50 hover:shadow-md transition-all font-semibold active:scale-[0.98] text-base">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-6 h-6" alt="Google"> Continue with Google
+                </button>
+                <div class="mt-8 flex items-center justify-center gap-3 text-[11px] text-gray-400">
+                    <button onclick="openModal('modal-legal-about')" class="hover:underline transition">About Us</button>
+                    <span>•</span>
+                    <button onclick="openModal('modal-legal-privacy')" class="hover:underline transition">Privacy Policy</button>
+                    <span>•</span>
+                    <button onclick="openModal('modal-legal-terms')" class="hover:underline transition">Terms</button>
                 </div>
             </div>
         </div>
@@ -197,63 +164,35 @@
     <div id="view-dashboard" class="view-section absolute inset-0 bg-[#F8F7F4] flex-col overflow-y-auto">
         <nav class="bg-white sticky top-0 z-40 border-b border-gray-200 shadow-sm shrink-0">
             <div class="max-w-6xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
-                <div class="font-serif font-bold text-xl text-brand-900 flex items-center gap-2"><i class="fa-solid fa-rings-wedding text-brand-500"></i> Studio</div>
-                
-                <!-- User Profile & Dropdown -->
-                <div class="relative" id="profile-container">
-                    <button id="btn-profile-toggle" onclick="toggleProfileDropdown(event)" class="flex items-center gap-2.5 py-1.5 px-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full transition active:scale-95 shadow-2xs cursor-pointer">
-                        <img id="user-avatar" src="" class="w-8 h-8 rounded-full object-cover bg-brand-100 border border-white shadow-2xs" alt="Profile" onerror="this.src='https://ui-avatars.com/api/?name=Studio+User&background=8A6D3B&color=fff'">
-                        <div class="hidden sm:flex flex-col text-left">
-                            <span id="user-nav-name" class="text-xs font-bold text-gray-800 leading-tight truncate max-w-[120px]">User</span>
-                            <span class="text-[9px] text-emerald-600 font-semibold leading-tight flex items-center gap-1">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Online
-                            </span>
-                        </div>
-                        <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 ml-0.5"></i>
+                <div class="font-serif font-bold text-xl text-brand-900 flex items-center gap-2"><i class="fa-solid fa-rings-wedding text-brand-500"></i> Invitation Studio</div>
+                <div class="relative flex items-center">
+                    <!-- Profile Dropdown Trigger Button -->
+                    <button onclick="toggleProfileDropdown(event)" id="btn-profile-trigger" class="flex items-center gap-1.5 hover:bg-gray-50 p-1 md:p-1.5 rounded-full transition relative focus:outline-none focus:ring-2 focus:ring-brand-500/20">
+                        <img id="user-avatar" src="" class="w-8 h-8 md:w-9 h-9 rounded-full bg-gray-200 border-2 border-brand-50 shadow-sm object-cover" alt="Avatar">
+                        <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 mr-1"></i>
                     </button>
-
-                    <!-- Profile Dropdown Card -->
-                    <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 z-50">
-                        <div class="flex items-center gap-3 pb-3 border-b border-gray-100">
-                            <img id="dropdown-user-avatar" src="" class="w-12 h-12 rounded-full object-cover bg-brand-100 border-2 border-brand-200 shadow-sm shrink-0" alt="Profile" onerror="this.src='https://ui-avatars.com/api/?name=Studio+User&background=8A6D3B&color=fff'">
-                            <div class="flex flex-col overflow-hidden text-left min-w-0">
-                                <span id="dropdown-user-name" class="font-bold text-gray-900 text-sm truncate">Salam</span>
-                                <span id="dropdown-user-email" class="text-xs text-gray-500 truncate">salamkvkavu5@gmail.com</span>
-                                <span id="dropdown-auth-badge" class="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 w-fit">
-                                    <i class="fa-solid fa-circle-check text-[9px]"></i> Logged In
-                                </span>
-                            </div>
+                    <!-- Dropdown Panel -->
+                    <div id="profile-dropdown" class="hidden absolute right-0 top-12 mt-1 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-3 z-50 transform origin-top-right transition-all">
+                        <div class="px-4 py-2 border-b border-gray-50 pb-3 mb-2">
+                            <p class="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Logged in as</p>
+                            <p id="profile-dropdown-name" class="font-bold text-gray-800 text-sm truncate mt-0.5">Guest User</p>
+                            <p id="profile-dropdown-email" class="text-xs text-gray-400 truncate">guest@example.com</p>
                         </div>
-
-                        <!-- Account Meta Info -->
-                        <div class="py-2.5 space-y-1 text-xs text-gray-600 border-b border-gray-100">
-                            <div class="flex justify-between items-center text-[11px] py-1">
-                                <span class="text-gray-400">Account ID:</span>
-                                <span id="dropdown-user-uid" class="font-mono text-[10px] text-gray-600 truncate max-w-[140px]">---</span>
-                            </div>
-                            <div class="flex justify-between items-center text-[11px] py-0.5">
-                                <span class="text-gray-400">Storage:</span>
-                                <span class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1"><i class="fa-solid fa-cloud-arrow-up text-[9px]"></i> Cloud Firestore</span>
-                            </div>
-                            <button onclick="openLegalModal('privacy'); closeProfileDropdown();" class="w-full text-left py-2 px-2.5 rounded-xl hover:bg-gray-50 flex items-center justify-between text-gray-700 transition">
-                                <span class="flex items-center gap-2 text-xs"><i class="fa-solid fa-shield-halved text-gray-400"></i> Privacy Policy</span>
-                                <i class="fa-solid fa-chevron-right text-[9px] text-gray-400"></i>
-                            </button>
-                            <button onclick="openLegalModal('cookies'); closeProfileDropdown();" class="w-full text-left py-2 px-2.5 rounded-xl hover:bg-gray-50 flex items-center justify-between text-gray-700 transition">
-                                <span class="flex items-center gap-2 text-xs"><i class="fa-solid fa-cookie-bite text-gray-400"></i> Cookie Policy</span>
-                                <i class="fa-solid fa-chevron-right text-[9px] text-gray-400"></i>
-                            </button>
-                            <button onclick="openLegalModal('terms'); closeProfileDropdown();" class="w-full text-left py-2 px-2.5 rounded-xl hover:bg-gray-50 flex items-center justify-between text-gray-700 transition">
-                                <span class="flex items-center gap-2 text-xs"><i class="fa-solid fa-file-contract text-gray-400"></i> Terms of Service</span>
-                                <i class="fa-solid fa-chevron-right text-[9px] text-gray-400"></i>
-                            </button>
-                        </div>
-
-                        <!-- Red Logout Button -->
-                        <div class="pt-3">
-                            <button id="btn-dropdown-logout" onclick="handleLogout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition active:scale-95 shadow-md shadow-red-500/20">
-                                <i class="fa-solid fa-power-off text-sm"></i>
-                                <span>Sign Out</span>
+                        <a href="#view-all/invitations" onclick="closeProfileDropdown()" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                            <i class="fa-solid fa-envelope text-gray-400 text-base w-5"></i> My Invitations
+                        </a>
+                        <button onclick="openModal('modal-legal-about'); closeProfileDropdown();" class="w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                            <i class="fa-solid fa-circle-info text-gray-400 text-base w-5"></i> About Application
+                        </button>
+                        <button onclick="openModal('modal-legal-privacy'); closeProfileDropdown();" class="w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                            <i class="fa-solid fa-shield-halved text-gray-400 text-base w-5"></i> Privacy Policy
+                        </button>
+                        <button onclick="openModal('modal-legal-terms'); closeProfileDropdown();" class="w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition">
+                            <i class="fa-solid fa-gavel text-gray-400 text-base w-5"></i> Terms of Service
+                        </button>
+                        <div class="border-t border-gray-50 mt-2 pt-2">
+                            <button id="btn-logout" class="w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50/50 transition font-bold">
+                                <i class="fa-solid fa-power-off text-red-400 text-base w-5"></i> Logout
                             </button>
                         </div>
                     </div>
@@ -275,78 +214,65 @@
                     <h3 class="text-xl font-bold text-gray-800">My Invitations</h3>
                     <button onclick="window.location.hash='#view-all/invitations'" class="text-sm font-semibold text-brand-500 hover:text-brand-900 transition flex items-center gap-1">View All <i class="fa-solid fa-arrow-right text-xs"></i></button>
                 </div>
-                <div id="invitations-row" class="flex gap-6 overflow-x-auto no-scrollbar pb-4 snap-x">
+                <div id="invitations-row" class="grid grid-cols-2 gap-3 md:flex md:gap-6 md:overflow-x-auto md:no-scrollbar md:pb-4 md:snap-x">
                     <!-- Dynamic horizontal cards inserted here -->
                 </div>
             </div>
 
             <!-- Templates Section -->
             <div class="mb-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <div class="flex items-center justify-between mb-4">
                     <h3 class="text-xl font-bold text-gray-800">Templates</h3>
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <div class="relative flex-grow sm:w-64 flex items-center">
-                            <i class="fa-solid fa-magnifying-glass text-gray-400 absolute left-3.5 text-xs pointer-events-none"></i>
-                            <input type="text" id="tpl-search-input" placeholder="Search templates..." oninput="filterDashboardTemplates()" class="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-18 py-2 text-xs focus:border-brand-500 outline-none shadow-xs">
-                            <button type="button" onclick="filterDashboardTemplates()" class="absolute right-1.5 px-3 py-1 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-[10px] font-bold transition active:scale-95 shadow-xs">
-                                Search
-                            </button>
-                        </div>
-                        <button onclick="window.location.hash='#view-all/templates'" class="text-xs font-semibold text-brand-500 hover:text-brand-900 transition flex items-center gap-1 shrink-0 whitespace-nowrap">View All <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
-                    </div>
+                    <button onclick="window.location.hash='#view-all/templates'" class="text-sm font-semibold text-brand-500 hover:text-brand-900 transition flex items-center gap-1">View All <i class="fa-solid fa-arrow-right text-xs"></i></button>
                 </div>
-                <div id="templates-row" class="grid grid-cols-2 gap-3 md:flex md:gap-6 md:overflow-x-auto no-scrollbar pb-2">
+                <div id="templates-row" class="flex gap-6 overflow-x-auto no-scrollbar pb-4 snap-x">
                     <!-- Dynamic horizontal templates inserted here -->
                 </div>
             </div>
-        </main>
 
-        <!-- Dashboard Footer with Legal & Cookie links -->
-        <footer class="mt-auto border-t border-gray-200/80 bg-white/80 backdrop-blur-xs py-6 px-4 md:px-8 text-center text-xs text-gray-500 shrink-0">
-            <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div class="flex items-center gap-2 font-serif font-bold text-gray-700">
-                    <i class="fa-solid fa-rings-wedding text-brand-500"></i> Wedding Studio
+            <!-- Beautiful Legal Footer -->
+            <footer class="border-t border-gray-200/60 pt-8 mt-16 text-center text-xs text-gray-400">
+                <p class="mb-3">© 2026 Invitation Studio. All rights reserved.</p>
+                <div class="flex items-center justify-center gap-4">
+                    <button onclick="openModal('modal-legal-about')" class="hover:text-brand-500 transition">About Us</button>
+                    <span>•</span>
+                    <button onclick="openModal('modal-legal-privacy')" class="hover:text-brand-500 transition">Privacy Policy</button>
+                    <span>•</span>
+                    <button onclick="openModal('modal-legal-terms')" class="hover:text-brand-500 transition">Terms of Service</button>
                 </div>
-                <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-[11px] text-gray-600 font-medium">
-                    <button type="button" onclick="openLegalModal('privacy')" class="hover:text-brand-700 transition cursor-pointer">Privacy Policy</button>
-                    <span class="text-gray-300">•</span>
-                    <button type="button" onclick="openLegalModal('terms')" class="hover:text-brand-700 transition cursor-pointer">Terms of Service</button>
-                    <span class="text-gray-300">•</span>
-                    <button type="button" onclick="openLegalModal('cookies')" class="hover:text-brand-700 transition cursor-pointer">Cookie Policy</button>
-                </div>
-                <div class="text-[10px] text-gray-400">
-                    © 2026 Wedding Studio. All rights reserved.
-                </div>
-            </div>
-        </footer>
+            </footer>
+        </main>
     </div>
 
     <div id="view-editor" class="view-section absolute inset-0 bg-gray-200 flex-col">
-        <nav class="bg-white border-b border-gray-200 h-14 md:h-16 flex items-center justify-between px-3 md:px-6 shrink-0 shadow-sm z-40">
-            <div class="flex items-center gap-2 md:gap-4">
-                <button onclick="goBackFromEditor()" class="w-10 h-10 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100 transition active:scale-95"><i class="fa-solid fa-arrow-left"></i></button>
+        <nav class="bg-white border-b border-gray-200 h-14 md:h-16 flex items-center justify-between px-2 md:px-6 shrink-0 shadow-sm z-40">
+            <div class="flex items-center gap-1 md:gap-4">
+                <button onclick="goBackFromEditor()" class="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100 transition active:scale-95"><i class="fa-solid fa-arrow-left text-sm md:text-base"></i></button>
                 <div class="flex flex-col">
-                    <span class="font-bold text-gray-800 text-sm leading-none">Visual Editor</span>
-                    <span id="save-status" class="text-[10px] text-gray-500 mt-1 transition-opacity opacity-0"><i class="fa-solid fa-cloud-arrow-up mr-1"></i>Saved</span>
+                    <span class="hidden md:block font-bold text-gray-800 text-sm leading-none">Visual Editor</span>
+                    <span id="save-status" class="text-[9px] md:text-[10px] text-gray-500 transition-opacity opacity-0"><i class="fa-solid fa-cloud-arrow-up mr-1"></i>Saved</span>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <button id="btn-header-save" onclick="saveInvitationManually()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 md:px-5 md:py-2 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 ring-2 ring-emerald-500/30">
-                    <i class="fa-solid fa-floppy-disk text-sm"></i> <span id="btn-header-save-text">Save Invitation</span>
+            <div class="flex items-center gap-1 md:gap-2">
+                <button id="btn-header-save" onclick="saveInvitation()" class="flex flex-col md:flex-row bg-emerald-600 hover:bg-emerald-700 text-white p-1.5 md:px-5 md:py-2 rounded-xl text-[9px] md:text-sm font-bold items-center justify-center gap-0.5 md:gap-2 transition-all shadow-md active:scale-95 ring-2 ring-emerald-500/30 min-w-[48px] sm:min-w-[54px] md:min-w-0" title="Save">
+                    <i class="fa-solid fa-floppy-disk text-xs md:text-sm"></i>
+                    <span class="text-[8px] md:text-xs leading-none">Save</span>
                 </button>
-                <button onclick="openInvitationDetails()" class="bg-brand-50 hover:bg-brand-100 text-brand-800 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition active:scale-95">
-                    <i class="fa-solid fa-pen-to-square text-brand-500"></i> <span>Invitation details</span>
+                <button onclick="openInvitationDetails()" class="flex flex-col md:flex-row bg-brand-50 hover:bg-brand-100 text-brand-800 p-1.5 md:px-4 md:py-2 rounded-xl text-[9px] md:text-xs font-bold items-center justify-center gap-0.5 md:gap-2 transition active:scale-95 min-w-[48px] sm:min-w-[54px] md:min-w-0" title="Invitation details">
+                    <i class="fa-solid fa-pen-to-square text-brand-500 text-xs md:text-sm"></i>
+                    <span class="text-[8px] md:text-xs leading-none">Details</span>
                 </button>
 
-                <button onclick="openModal('modal-themes')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs font-bold flex items-center gap-2 transition active:scale-95">
-                    <i class="fa-solid fa-palette text-brand-500"></i> <span class="hidden md:inline">Theme & BG</span>
+                <button onclick="openModal('modal-themes')" class="flex flex-col md:flex-row bg-gray-100 hover:bg-gray-200 text-gray-700 p-1.5 md:px-4 md:py-2 rounded-xl text-[9px] md:text-xs font-bold items-center justify-center gap-0.5 md:gap-2 transition active:scale-95 min-w-[48px] sm:min-w-[54px] md:min-w-0" title="Theme & BG">
+                    <i class="fa-solid fa-palette text-brand-500 text-xs md:text-sm"></i>
+                    <span class="text-[8px] md:text-xs leading-none">Theme</span>
                 </button>
-                <div class="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-1.5 md:py-2 border border-gray-200 shadow-inner">
-                    <span id="publish-status-text" class="text-[10px] md:text-xs font-bold text-gray-600 w-12 md:w-16 text-center">Draft</span>
+                <div class="flex flex-col md:flex-row items-center justify-center bg-gray-100 rounded-xl p-1.5 md:px-3 md:py-2 border border-gray-200 shadow-inner min-w-[48px] sm:min-w-[54px] md:min-w-0" title="Publish Status">
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="toggle-publish" class="sr-only peer" onchange="togglePublishStatus(this)">
-                        <div class="w-8 h-4 md:w-9 md:h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 md:after:h-4 md:after:w-4 after:transition-all peer-checked:bg-green-500"></div>
+                        <div class="w-6 h-3 md:w-9 md:h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] md:after:top-[2px] after:left-[1px] md:after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-2 after:w-2 md:after:h-4 md:after:w-4 after:transition-all peer-checked:bg-green-500"></div>
                     </label>
+                    <span id="publish-status-text" class="text-[7px] md:text-[10px] font-bold text-gray-600 w-10 md:w-16 text-center leading-none mt-0.5 md:mt-0">Draft</span>
                 </div>
             </div>
         </nav>
@@ -382,18 +308,14 @@
         <main class="max-w-6xl mx-auto px-4 md:px-8 py-8 w-full flex-grow pb-24">
             <div class="mb-6">
                 <!-- Search & Category Dropdown Row -->
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6">
-                    <div class="relative flex-grow flex items-center">
-                        <i class="fa-solid fa-magnifying-glass text-gray-400 absolute left-4 text-sm pointer-events-none"></i>
-                        <input type="text" id="view-all-page-search" placeholder="Search by name, groom, bride..." onkeyup="if(event.key==='Enter') handleViewAllPageSearch(this.value)" oninput="handleViewAllPageSearch(this.value)" class="w-full bg-white border border-gray-200 rounded-2xl pl-11 pr-24 py-3.5 text-sm focus:border-brand-500 outline-none shadow-sm transition">
-                        <button type="button" onclick="handleViewAllPageSearch(document.getElementById('view-all-page-search').value)" class="absolute right-2 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-xs font-bold transition active:scale-95 shadow-xs flex items-center gap-1.5">
-                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                            <span>Search</span>
-                        </button>
+                <div class="flex items-center gap-2 mb-6">
+                    <div class="relative flex-grow">
+                        <input type="text" id="view-all-page-search" placeholder="Search..." oninput="handleViewAllPageSearch(this.value)" class="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-xs md:text-sm focus:border-brand-500 outline-none shadow-sm">
+                        <i class="fa-solid fa-magnifying-glass text-gray-400 absolute left-3.5 top-3.5 text-xs"></i>
                     </div>
                     <!-- Dropdown Category filter (Shown only for templates) -->
                     <div id="view-all-tpl-category-box" class="hidden shrink-0">
-                        <select id="view-all-tpl-category" onchange="handleViewAllPageSearch()" class="w-full sm:w-auto bg-white border border-gray-200 rounded-2xl px-4 py-3.5 text-sm focus:border-brand-500 outline-none shadow-sm font-bold text-gray-700">
+                        <select id="view-all-tpl-category" onchange="handleViewAllPageSearch()" class="bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-xs md:text-sm focus:border-brand-500 outline-none shadow-sm font-bold text-gray-700 min-w-[120px] md:min-w-[160px]">
                             <option value="all">All Templates</option>
                             <option value="single">Single Page</option>
                             <option value="slide">Slide</option>
@@ -539,12 +461,7 @@
             
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center shrink-0 bg-white md:rounded-t-3xl rounded-t-3xl">
                 <h3 class="font-bold text-gray-800 text-lg" id="modal-title">Edit</h3>
-                <div class="flex items-center gap-2">
-                    <button id="btn-sidebar-save" onclick="saveInvitationManually()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-sm">
-                        <i class="fa-solid fa-floppy-disk text-xs"></i> <span>Save</span>
-                    </button>
-                    <button onclick="closeModal()" class="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-600 transition"><i class="fa-solid fa-xmark"></i></button>
-                </div>
+                <button onclick="closeModal()" class="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-600 transition"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <!-- Dynamic Style Panel (Injected when editing specific elements) -->
@@ -837,7 +754,7 @@
                     </div>
                     
                     <div class="border-t border-gray-100 pt-4">
-                        <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">Custom Background Image</h4>
+                        <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">Custom Background Image / പശ്ചാത്തല ചിത്രം</h4>
                         <div class="border border-gray-200 p-4 rounded-2xl bg-gray-50 flex flex-col items-center gap-4 text-center">
                              <div class="relative w-[100px] aspect-[9/16] rounded-xl overflow-hidden border border-gray-200 shadow-inner flex items-center justify-center bg-gray-100">
                                  <img id="prev-bg-image" class="absolute inset-0 w-full h-full object-cover hidden">
@@ -888,6 +805,78 @@
                     </div>
                 </div>
 
+                <!-- 8. About Application Modal -->
+                <div id="modal-legal-about" class="hidden edit-form space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+                    <div class="text-center py-4">
+                        <div class="w-16 h-16 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
+                            <i class="fa-solid fa-rings-wedding text-3xl text-brand-500"></i>
+                        </div>
+                        <h4 class="font-serif font-bold text-xl text-gray-900">Invitation Studio</h4>
+                        <p class="text-xs text-gray-400 mt-1">Version 1.2.0 • Premium Web-First Keepsakes</p>
+                    </div>
+                    <div class="space-y-3 text-sm text-gray-600 leading-relaxed font-sans">
+                        <p><strong>Invitation Studio</strong> is an elegant, premium, and fully-customizable digital invitation platform. We enable couples, hosts, and event managers to build exquisite, interactive mobile and web-first wedding invitations.</p>
+                        <p>Leveraging powerful drag-and-drop mechanics, rich custom typography, dynamic background music controls, instant RSVP guest list management, and elegant premium templates, Invitation Studio turns a simple wedding announcement into an unforgettable digital keepsake.</p>
+                        <p>Crafted with precision, our mission is to blend fine art and state-of-the-art web technology, providing couples and event hosts with the ultimate medium to welcome their beloved guests with sophistication.</p>
+                    </div>
+                </div>
+
+                <!-- 9. Privacy Policy Modal -->
+                <div id="modal-legal-privacy" class="hidden edit-form space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+                    <div class="space-y-4 text-xs text-gray-600 leading-relaxed font-sans">
+                        <div class="border-b border-gray-100 pb-3">
+                            <h4 class="font-serif font-bold text-base text-gray-900">Privacy Policy</h4>
+                            <p class="text-[10px] text-gray-400 mt-0.5">Last updated: September 30, 2026</p>
+                        </div>
+                        <div class="space-y-2">
+                            <h5 class="font-bold text-gray-800 text-sm">1. Introduction</h5>
+                            <p>At Invitation Studio, your privacy is of paramount importance. This Privacy Policy details how we collect, store, secure, and process your personal information when you use our services.</p>
+                        </div>
+                        <div class="space-y-2">
+                            <h5 class="font-bold text-gray-800 text-sm">2. Data We Collect</h5>
+                            <p>We collect your Google Account profile details (such as your full name, email address, and profile photo) during the Google Sign-In authentication process. While designing invitations, we process event metadata, RSVP responses, guest attendance, and customized text/image inputs.</p>
+                        </div>
+                        <div class="space-y-2">
+                            <h5 class="font-bold text-gray-800 text-sm">3. How We Use Your Data</h5>
+                            <p>Your information is strictly used to authenticate your session, sync your designs with cloud storage, display your public invitation pages, and allow you to view, filter, and export guest RSVP responses.</p>
+                        </div>
+                        <div class="space-y-2">
+                            <h5 class="font-bold text-gray-800 text-sm">4. Data Retention & Security</h5>
+                            <p>We securely store your invitation drafts, templates, and published details on Google Firebase Cloud Firestore. We implement strict server-side security rules to ensure that unauthorized third parties cannot edit or read your private draft configurations.</p>
+                        </div>
+                        <div class="space-y-2">
+                            <h5 class="font-bold text-gray-800 text-sm">5. Your Rights</h5>
+                            <p>You have full control over your data. You can delete your invitations, clear guest lists, or modify any saved draft permanently at any time directly through your dashboard.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 10. Terms of Service Modal -->
+                <div id="modal-legal-terms" class="hidden edit-form space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+                    <div class="space-y-4 text-xs text-gray-600 leading-relaxed font-sans">
+                        <div class="border-b border-gray-100 pb-3">
+                            <h4 class="font-serif font-bold text-base text-gray-900">Terms of Service</h4>
+                            <p class="text-[10px] text-gray-400 mt-0.5">Last updated: September 30, 2026</p>
+                        </div>
+                        <div class="space-y-2">
+                            <h5 class="font-bold text-gray-800 text-sm">1. Acceptance of Terms</h5>
+                            <p>By accessing and using Invitation Studio, you agree to comply with and be bound by these Terms of Service. If you do not agree, please refrain from using the platform.</p>
+                        </div>
+                        <div class="space-y-2">
+                            <h5 class="font-bold text-gray-800 text-sm">2. Use of Service</h5>
+                            <p>Users are granted a revocable, non-exclusive license to design, customize, and publish digital invitations. Any misuse, hosting of illegal, abusive, or copyright-infringing content will result in immediate termination of the hosted invitation and your account.</p>
+                        </div>
+                        <div class="space-y-2">
+                            <h5 class="font-bold text-gray-800 text-sm">3. User Content</h5>
+                            <p>You remain the sole owner of any images, texts, dates, and locations uploaded to your invitation. By publishing, you grant Invitation Studio the right to host and display this content to your designated guests.</p>
+                        </div>
+                        <div class="space-y-2">
+                            <h5 class="font-bold text-gray-800 text-sm">4. Service Availability</h5>
+                            <p>While we strive for 100% uptime, our hosting services are provided "as-is." Invitation Studio shall not be liable for any temporary downtime, loss of event data, or technical disruptions.</p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             
             <div id="modal-footer" class="p-4 border-t border-gray-100 bg-white md:rounded-b-3xl shrink-0">
@@ -895,8 +884,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Image Crop Modal -->
 
     <div id="image-crop-modal" class="fixed inset-0 z-[200] bg-black/80 hidden items-center justify-center p-3 md:p-4">
         <div class="w-full max-w-sm rounded-3xl bg-white p-5 shadow-2xl flex flex-col max-h-[95dvh] overflow-hidden" id="image-crop-modal-box">
@@ -929,189 +916,10 @@
         </div>
     </div>
 
-    <!-- Legal, Privacy Policy, Terms & Cookies Modal -->
-    <div id="modal-legal" class="fixed inset-0 z-[10000] modal-overlay hidden flex-col justify-center items-center p-3 sm:p-6 backdrop-blur-sm bg-black/60">
-        <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200" id="legal-modal-card">
-            <!-- Header -->
-            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/80">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-sm shadow-2xs">
-                        <i class="fa-solid fa-scale-balanced"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-gray-900 text-base" id="legal-modal-title">Privacy Policy & Legal Terms</h3>
-                        <p class="text-[10px] text-gray-500">Transparency, Security & User Data Protection</p>
-                    </div>
-                </div>
-                <button onclick="closeLegalModal()" class="w-8 h-8 bg-white hover:bg-gray-100 border border-gray-200 rounded-full flex items-center justify-center text-gray-500 transition cursor-pointer active:scale-95">
-                    <i class="fa-solid fa-xmark text-sm"></i>
-                </button>
-            </div>
-
-            <!-- Tab Switcher -->
-            <div class="flex border-b border-gray-200 bg-white px-4 sm:px-6 gap-2 text-xs font-bold shrink-0 overflow-x-auto no-scrollbar">
-                <button onclick="switchLegalTab('privacy')" id="tab-btn-privacy" class="py-3 px-3 border-b-2 border-brand-600 text-brand-700 flex items-center gap-1.5 transition whitespace-nowrap cursor-pointer">
-                    <i class="fa-solid fa-shield-halved"></i> <span>Privacy Policy</span>
-                </button>
-                <button onclick="switchLegalTab('cookies')" id="tab-btn-cookies" class="py-3 px-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 flex items-center gap-1.5 transition whitespace-nowrap cursor-pointer">
-                    <i class="fa-solid fa-cookie-bite"></i> <span>Cookie Policy</span>
-                </button>
-                <button onclick="switchLegalTab('terms')" id="tab-btn-terms" class="py-3 px-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 flex items-center gap-1.5 transition whitespace-nowrap cursor-pointer">
-                    <i class="fa-solid fa-file-contract"></i> <span>Terms of Service</span>
-                </button>
-            </div>
-
-            <!-- Modal Content Body -->
-            <div class="p-6 overflow-y-auto space-y-6 text-sm text-gray-700 leading-relaxed flex-grow">
-                
-                <!-- PRIVACY TAB -->
-                <div id="legal-content-privacy" class="space-y-4">
-                    <div class="bg-brand-50/60 p-4 rounded-2xl border border-brand-100">
-                        <h4 class="font-bold text-brand-900 mb-1 flex items-center gap-2 text-sm">
-                            <i class="fa-solid fa-lock text-brand-600"></i> Data Protection Commitment
-                        </h4>
-                        <p class="text-xs text-brand-950/80 leading-relaxed">
-                            Wedding Studio prioritizes the privacy of you, your family, and your guests. Your personal information, photos, and event details are kept strictly confidential and are never sold or shared with third parties for marketing.
-                        </p>
-                    </div>
-
-                    <div class="space-y-2">
-                        <h5 class="font-bold text-gray-900 text-xs uppercase tracking-wider text-brand-800">1. Information We Collect</h5>
-                        <ul class="list-disc pl-5 space-y-1.5 text-xs text-gray-600">
-                            <li><strong>Account Information:</strong> Name, email address, and profile photo provided via authentication.</li>
-                            <li><strong>Wedding Details:</strong> Groom and Bride names, wedding date, ceremony time, venue name, address, and Google Maps location.</li>
-                            <li><strong>Uploaded Media:</strong> Photos, portraits, and background graphics you upload. Images are compressed locally in your browser and stored safely.</li>
-                            <li><strong>RSVP Guest Details:</strong> Guest names, contact phone numbers, and attendance counts submitted via RSVP forms, accessible only by the event creator.</li>
-                        </ul>
-                    </div>
-
-                    <div class="space-y-2">
-                        <h5 class="font-bold text-gray-900 text-xs uppercase tracking-wider text-brand-800">2. How We Use Information</h5>
-                        <p class="text-xs text-gray-600 leading-relaxed">
-                            We use your data solely to generate and render your custom digital invitation, enable your guests to view the invitation via private links, and provide RSVP guest management to the event host.
-                        </p>
-                    </div>
-
-                    <div class="space-y-2">
-                        <h5 class="font-bold text-gray-900 text-xs uppercase tracking-wider text-brand-800">3. Your Rights & Control</h5>
-                        <p class="text-xs text-gray-600 leading-relaxed">
-                            You retain complete control over your invitations. You can edit, publish, revert to draft, or permanently delete your invitation at any time. Deletion permanently erases the invitation and all associated RSVP entries from our systems.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- COOKIES TAB -->
-                <div id="legal-content-cookies" class="hidden space-y-4">
-                    <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100">
-                        <h4 class="font-bold text-amber-900 mb-1 flex items-center gap-2 text-sm">
-                            <i class="fa-solid fa-cookie text-amber-600"></i> Cookie Policy & Storage
-                        </h4>
-                        <p class="text-xs text-amber-950/80 leading-relaxed">
-                            We utilize essential session cookies and local browser storage (LocalStorage) to maintain your login session and safeguard your invitation drafts.
-                        </p>
-                    </div>
-
-                    <div class="space-y-3">
-                        <h5 class="font-bold text-gray-900 text-xs uppercase tracking-wider text-brand-800">Cookies & Storage Types:</h5>
-                        <div class="space-y-2.5">
-                            <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-start justify-between gap-3">
-                                <div>
-                                    <span class="font-bold text-xs text-gray-900 block">Essential Authentication Cookies</span>
-                                    <span class="text-[11px] text-gray-500">Maintains secure account sessions and verifies authorized access to your invitations.</span>
-                                </div>
-                                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full shrink-0">Always Active</span>
-                            </div>
-
-                            <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-start justify-between gap-3">
-                                <div>
-                                    <span class="font-bold text-xs text-gray-900 block">Local Draft Caching & Offline Storage</span>
-                                    <span class="text-[11px] text-gray-500">Caches your editing progress on your device to prevent data loss in case of temporary network fluctuations.</span>
-                                </div>
-                                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full shrink-0">Always Active</span>
-                            </div>
-
-                            <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-start justify-between gap-3">
-                                <div>
-                                    <span class="font-bold text-xs text-gray-900 block">Third-Party Advertising Trackers</span>
-                                    <span class="text-[11px] text-gray-500">We do not use any third-party advertising tracking cookies or ad networks.</span>
-                                </div>
-                                <span class="text-[10px] font-bold text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full shrink-0">None</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TERMS TAB -->
-                <div id="legal-content-terms" class="hidden space-y-4">
-                    <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100">
-                        <h4 class="font-bold text-blue-900 mb-1 flex items-center gap-2 text-sm">
-                            <i class="fa-solid fa-file-contract text-blue-600"></i> Terms of Service
-                        </h4>
-                        <p class="text-xs text-blue-950/80 leading-relaxed">
-                            By accessing or using Wedding Studio, you agree to comply with and be bound by the following terms.
-                        </p>
-                    </div>
-
-                    <div class="space-y-2">
-                        <h5 class="font-bold text-gray-900 text-xs uppercase tracking-wider text-brand-800">1. Acceptable Use</h5>
-                        <p class="text-xs text-gray-600 leading-relaxed">
-                            This platform is designed for creating personal wedding and reception invitations. Uploading abusive, defamatory, copyright-infringing, or unlawful content is strictly prohibited.
-                        </p>
-                    </div>
-
-                    <div class="space-y-2">
-                        <h5 class="font-bold text-gray-900 text-xs uppercase tracking-wider text-brand-800">2. Content Ownership</h5>
-                        <p class="text-xs text-gray-600 leading-relaxed">
-                            You retain complete ownership and intellectual property rights over all photos, texts, and information you upload. The layout templates and underlying code belong to Wedding Studio.
-                        </p>
-                    </div>
-
-                    <div class="space-y-2">
-                        <h5 class="font-bold text-gray-900 text-xs uppercase tracking-wider text-brand-800">3. Service Availability</h5>
-                        <p class="text-xs text-gray-600 leading-relaxed">
-                            While we strive for maximum reliability, the service is provided on an as-available basis and we cannot guarantee uninterrupted access during scheduled maintenance or network outages.
-                        </p>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Footer -->
-            <div class="px-6 py-3.5 border-t border-gray-100 bg-gray-50 flex items-center justify-between shrink-0">
-                <span class="text-[11px] text-gray-400">Wedding Studio • Secure & Reliable</span>
-                <button onclick="closeLegalModal()" class="bg-gray-800 hover:bg-gray-900 text-white px-5 py-2 rounded-xl text-xs font-bold transition active:scale-95 shadow-sm cursor-pointer">
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Cookie Consent Banner -->
-    <div id="cookie-banner" class="hidden fixed bottom-4 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-md bg-gray-900/95 text-white p-4 rounded-2xl shadow-2xl backdrop-blur-md z-[9990] border border-white/10 animate-in slide-in-from-bottom duration-300">
-        <div class="flex items-start gap-3">
-            <div class="w-9 h-9 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center shrink-0 mt-0.5">
-                <i class="fa-solid fa-cookie-bite text-lg"></i>
-            </div>
-            <div class="flex-grow text-xs leading-relaxed text-gray-300">
-                <p class="font-semibold text-white mb-1">Cookies & Storage</p>
-                <p>We use essential cookies and local storage to ensure your wedding invitations and design drafts save reliably.</p>
-                <div class="mt-3 flex items-center gap-2">
-                    <button onclick="acceptAllCookies()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold transition active:scale-95 shadow-sm cursor-pointer">
-                        Accept All
-                    </button>
-                    <button onclick="openLegalModal('cookies')" class="text-gray-300 hover:text-white px-2 py-1.5 text-xs underline transition cursor-pointer">
-                        Learn More
-                    </button>
-                </div>
-            </div>
-            <button onclick="dismissCookieBanner()" class="text-gray-400 hover:text-white text-xs p-1 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, query, where, updateDoc, deleteDoc, serverTimestamp, getDocFromServer } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, query, where, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         import { firebaseConfig } from "./firebase-config.js";
 
         let app, auth, db;
@@ -1129,48 +937,10 @@
             templates: {}
         };
 
-        // Firestore Error Handler conforming to FirestoreErrorInfo
-        function handleFirestoreError(error, operationType, path = null) {
-            try {
-                const errInfo = {
-                    error: error instanceof Error ? error.message : String(error),
-                    operationType,
-                    path,
-                    authInfo: {
-                        userId: auth?.currentUser?.uid || currentUser?.uid || null,
-                        email: auth?.currentUser?.email || currentUser?.email || null,
-                        emailVerified: auth?.currentUser?.emailVerified || null,
-                        isAnonymous: auth?.currentUser?.isAnonymous || null,
-                        tenantId: auth?.currentUser?.tenantId || null,
-                        providerInfo: Array.isArray(auth?.currentUser?.providerData) ? auth.currentUser.providerData.map(provider => ({
-                            providerId: provider.providerId,
-                            email: provider.email,
-                        })) : []
-                    }
-                };
-                console.warn('Firestore Operation Notice: ', JSON.stringify(errInfo));
-                return errInfo;
-            } catch (e) {
-                console.warn('Firestore Operation Notice:', String(error?.message || error));
-            }
-        }
-
         try {
             app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
-
-            // Connection validation per Firebase guidelines
-            async function testConnection() {
-                try {
-                    await getDocFromServer(doc(db, 'test', 'connection'));
-                } catch (error) {
-                    if (error instanceof Error && error.message.includes('the client is offline')) {
-                        console.warn("Please check your Firebase configuration.");
-                    }
-                }
-            }
-            testConnection();
         } catch (e) {
             console.error("Firebase init failed:", e);
             showToast("Firebase Config Error.", "error");
@@ -1396,9 +1166,9 @@
 
                 const ics = `BEGIN:VCALENDAR\r
 VERSION:2.0\r
-PRODID:-//Wedding Studio//Reminder//EN\r
+PRODID:-//Invitation Studio//Reminder//EN\r
 BEGIN:VEVENT\r
-UID:${Date.now()}@wedding-studio\r
+UID:${Date.now()}@invitation-studio\r
 DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}\r
 DTSTART:${startIcs}\r
 DTEND:${endIcs}\r
@@ -1461,67 +1231,6 @@ END:VCALENDAR`;
             });
         };
 
-        // ================= EVENT PHOTOS POPUP MODAL =================
-        window.openPhotosModal = function(qrUrl, linkUrl) {
-            const existing = document.getElementById('photos-modal-overlay');
-            if (existing) existing.remove();
-
-            const safeQr = (qrUrl && qrUrl !== 'undefined' && qrUrl !== 'null') ? qrUrl : '';
-            const safeLink = (linkUrl && linkUrl !== 'undefined' && linkUrl !== 'null') ? linkUrl : '';
-
-            const overlay = document.createElement('div');
-            overlay.id = 'photos-modal-overlay';
-            overlay.className = 'fixed inset-0 z-[10000] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300';
-            overlay.style.fontFamily = "'Poppins', sans-serif";
-
-            overlay.innerHTML = `
-                <div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden flex flex-col text-gray-800 transform scale-95 opacity-0 transition-all duration-200" id="photos-modal-box">
-                    <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/80">
-                        <div class="flex items-center gap-2">
-                            <span class="w-8 h-8 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center text-sm shadow-xs">
-                                <i class="fa-solid fa-camera-retro"></i>
-                            </span>
-                            <h3 class="font-bold text-gray-900 text-sm">Event Photos</h3>
-                        </div>
-                        <button type="button" onclick="document.getElementById('photos-modal-overlay')?.remove()" class="w-8 h-8 rounded-full bg-white hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 shadow-sm border border-gray-100 transition active:scale-95">
-                            <i class="fa-solid fa-xmark text-sm"></i>
-                        </button>
-                    </div>
-                    <div class="p-6 flex flex-col items-center text-center space-y-4">
-                        <p class="text-xs text-gray-600 leading-relaxed">Scan the QR code below or tap the button to access and share the celebration photo gallery.</p>
-                        ${safeQr ? `
-                        <div class="p-3 bg-white border border-gray-200 rounded-2xl shadow-md w-48 h-48 flex items-center justify-center mx-auto">
-                            <img src="${safeQr}" alt="Photos QR Code" class="w-full h-full object-contain rounded-xl">
-                        </div>
-                        ` : `
-                        <div class="w-44 h-44 rounded-2xl bg-amber-50/50 border border-dashed border-amber-300 flex flex-col items-center justify-center text-amber-600 p-4 mx-auto">
-                            <i class="fa-solid fa-qrcode text-4xl mb-2 opacity-60 animate-pulse"></i>
-                            <span class="text-[11px] font-semibold">QR Code Not Uploaded</span>
-                        </div>
-                        `}
-                        ${safeLink ? `
-                        <a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 text-white font-bold text-xs uppercase tracking-wider shadow-md transition active:scale-95 flex items-center justify-center gap-2 no-underline">
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Photo Gallery
-                        </a>
-                        ` : ''}
-                    </div>
-                </div>
-            `;
-
-            document.body.appendChild(overlay);
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) overlay.remove();
-            });
-
-            requestAnimationFrame(() => {
-                const box = document.getElementById('photos-modal-box');
-                if (box) {
-                    box.classList.remove('scale-95', 'opacity-0');
-                    box.classList.add('scale-100', 'opacity-100');
-                }
-            });
-        };
-
         // ================= TEMPLATE ENGINE & RENDERER =================
         window.registerTemplate = function(templateObj) {
             state.templates[templateObj.id] = templateObj;
@@ -1550,7 +1259,7 @@ END:VCALENDAR`;
                         const script = document.createElement('script');
                         script.src = new URL(file, templatesUrl).href;
                         script.onload = resolve;
-                        script.onerror = resolve; // Continue to next script on error
+                        script.onerror = resolve; // പിഴവ് വന്നാലും അടുത്തതിലേക്ക് പോകും
                         document.head.appendChild(script);
                     });
                 }
@@ -1558,6 +1267,11 @@ END:VCALENDAR`;
                 console.log("No external templates found. Make sure /templates/registry.json exists.");
             }
         }
+
+        let templatesLoaded = false;
+        const templatesLoadedPromise = loadExternalTemplates().then(() => {
+            templatesLoaded = true;
+        });
 
         // Helper for inline block styles
         const getStyleStr = (d, key, defaultSize, defaultFont, defaultColor) => {
@@ -1717,12 +1431,6 @@ END:VCALENDAR`;
         // ================= ROUTING & AUTH =================
         let lastListViewHash = '#dashboard';
         window.goBackFromEditor = function() {
-            if (state.hasUnsavedChanges) {
-                if (!confirm("You have unsaved changes. Are you sure you want to leave without saving?")) {
-                    return;
-                }
-            }
-            state.hasUnsavedChanges = false;
             if (typeof closeModal === 'function') closeModal();
             window.location.hash = lastListViewHash || '#dashboard';
         };
@@ -1734,7 +1442,10 @@ END:VCALENDAR`;
             });
         }
 
-        function handleRoute() {
+        async function handleRoute() {
+            if (!templatesLoaded) {
+                await templatesLoadedPromise;
+            }
             const hash = window.location.hash || '#/';
             
             // Record last list view hash for editor Back buttons
@@ -1751,18 +1462,6 @@ END:VCALENDAR`;
                     setTimeout(() => el.classList.add('active'), 10); 
                 }
             };
-
-            if (!currentUser) {
-                const savedGuest = sessionStorage.getItem('wedding_guest_session');
-                if (savedGuest) {
-                    try {
-                        currentUser = JSON.parse(savedGuest);
-                        const greeting = document.getElementById('dash-greeting');
-                        const displayName = currentUser.displayName || 'Creator';
-                        if (greeting) greeting.innerHTML = `Welcome, ${displayName}! <span class="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">Studio</span>`;
-                    } catch (e) {}
-                }
-            }
 
             if (hash === '#/') {
                 if (currentUser) window.location.hash = '#dashboard';
@@ -1835,30 +1534,21 @@ END:VCALENDAR`;
 
         if(auth) {
             onAuthStateChanged(auth, (user) => {
+                currentUser = user;
                 if (user) {
-                    currentUser = user;
-                    sessionStorage.removeItem('wedding_guest_session');
-                    const firstName = user.displayName ? user.displayName.split(' ')[0] : 'User';
-                    const greeting = document.getElementById('dash-greeting');
-                    if (greeting) greeting.innerText = `Welcome, ${firstName}!`;
-                    updateUserProfileUI(currentUser);
-                } else {
-                    const savedGuest = sessionStorage.getItem('wedding_guest_session');
-                    if (savedGuest) {
-                        try {
-                            currentUser = JSON.parse(savedGuest);
-                            const greeting = document.getElementById('dash-greeting');
-                            const displayName = currentUser.displayName || 'Creator';
-                            if (greeting) greeting.innerHTML = `Welcome, ${displayName}! <span class="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">Studio</span>`;
-                            updateUserProfileUI(currentUser);
-                        } catch (e) {
-                            currentUser = null;
-                            updateUserProfileUI(null);
+                    document.getElementById('dash-greeting').innerText = `Welcome, ${user.displayName ? user.displayName.split(' ')[0] : 'User'}!`;
+                    if(user.photoURL) {
+                        const img = document.getElementById('user-avatar');
+                        if (img) {
+                            img.src = user.photoURL;
+                            img.classList.remove('hidden');
                         }
-                    } else {
-                        currentUser = null;
-                        updateUserProfileUI(null);
                     }
+                    // Populate profile dropdown details
+                    const dropName = document.getElementById('profile-dropdown-name');
+                    if (dropName) dropName.innerText = user.displayName || 'Guest User';
+                    const dropEmail = document.getElementById('profile-dropdown-email');
+                    if (dropEmail) dropEmail.innerText = user.email || 'guest@example.com';
                 }
                 handleRoute();
             });
@@ -1867,7 +1557,7 @@ END:VCALENDAR`;
         function getGoogleLoginErrorMessage(error) {
             const messages = {
                 'auth/operation-not-allowed': 'Google Sign-in is not enabled in this Firebase project.',
-                'auth/unauthorized-domain': 'This preview domain is not authorized in Firebase Authentication. Click "Firebase Domain Setup Guide" below to add it or use Guest Mode.',
+                'auth/unauthorized-domain': 'This website domain is not authorized for Firebase Google Sign-in.',
                 'auth/invalid-api-key': 'The Firebase API key is invalid or restricted for this website.',
                 'auth/app-not-authorized': 'This website is not authorized to use the configured Firebase project.',
                 'auth/popup-blocked': 'The browser blocked the Google login popup. Allow popups and try again.',
@@ -1879,386 +1569,29 @@ END:VCALENDAR`;
             return `${messages[code] || 'Google Sign-in failed. Please try again.'} (${code})`;
         }
 
-        window.openDomainHelpModal = function() {};
-        window.closeDomainHelpModal = function() {};
-
-        window.copyCurrentDomain = function() {
-            const domain = window.location.hostname;
-            const btnText = document.getElementById('btn-copy-domain-text');
-            const setCopied = () => {
-                if (btnText) btnText.innerText = 'Copied!';
-                showToast(`Copied domain: ${domain}`, "info");
-                setTimeout(() => { if (btnText) btnText.innerText = 'Copy'; }, 2500);
-            };
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(domain).then(setCopied).catch(() => {
-                    fallbackCopyText(domain);
-                    setCopied();
-                });
-            } else {
-                fallbackCopyText(domain);
-                setCopied();
-            }
-        };
-
-        window.copyTextValue = function(text, btnElement) {
-            const originalHtml = btnElement ? btnElement.innerHTML : '';
-            const setCopied = () => {
-                if (btnElement) btnElement.innerHTML = '<i class="fa-solid fa-check text-green-500"></i> Copied!';
-                showToast(`Copied: ${text}`, "info");
-                setTimeout(() => { if (btnElement) btnElement.innerHTML = originalHtml; }, 2500);
-            };
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(setCopied).catch(() => {
-                    fallbackCopyText(text);
-                    setCopied();
-                });
-            } else {
-                fallbackCopyText(text);
-                setCopied();
-            }
-        };
-
-        function fallbackCopyText(text) {
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            ta.style.position = 'fixed';
-            ta.style.opacity = '0';
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand('copy');
-            document.body.removeChild(ta);
-        }
-
-        function getDeviceUserProfile() {
-            try {
-                const saved = localStorage.getItem('wedding_device_profile');
-                if (saved) return JSON.parse(saved);
-            } catch (e) {}
-            return null;
-        }
-
-        function saveDeviceUserProfile(profile) {
-            try {
-                localStorage.setItem('wedding_device_profile', JSON.stringify(profile));
-            } catch (e) {}
-        }
-
-        window.quickStudioLogin = function() {
-            showLoader("Opening Studio...");
-            const existingProfile = getDeviceUserProfile();
-            if (existingProfile) {
-                currentUser = existingProfile;
-            } else {
-                currentUser = {
-                    uid: 'device_user_' + Math.random().toString(36).substring(2, 10),
-                    displayName: 'Creator',
-                    email: 'creator@weddingstudio.app',
-                    isDirectUser: true
-                };
-                saveDeviceUserProfile(currentUser);
-            }
-            sessionStorage.setItem('wedding_guest_session', JSON.stringify(currentUser));
-            
-            const greeting = document.getElementById('dash-greeting');
-            if (greeting) {
-                const name = currentUser.displayName || 'Creator';
-                greeting.innerHTML = `Welcome, ${name}! <span class="ml-2 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">Studio</span>`;
-            }
-            
-            hideLoader();
-            window.location.hash = '#dashboard';
-            showToast("Welcome to Wedding Studio!", "success");
-        };
-
-        window.continueAsGuest = function() {
-            quickStudioLogin();
-        };
-
-        // Popup login with seamless auto-fallback to device session
+        // Popup login to avoid redirect loops and white screens
         document.getElementById('btn-google-login')?.addEventListener('click', async () => {
-            showLoader("Signing in with Google...");
+            showLoader("Signing in securely...");
             try {
-                const result = await signInWithPopup(auth, new GoogleAuthProvider());
-                if (result?.user) {
-                    const profile = {
-                        uid: result.user.uid,
-                        displayName: result.user.displayName || 'Google User',
-                        email: result.user.email,
-                        photoURL: result.user.photoURL,
-                        isGoogleUser: true
-                    };
-                    saveDeviceUserProfile(profile);
-                }
+                await signInWithPopup(auth, new GoogleAuthProvider());
                 hideLoader();
             } catch (error) {
                 hideLoader();
-                if (error?.code === 'auth/unauthorized-domain') {
-                    console.warn("Firebase Auth Notice: Preview domain requires direct login. Auto-entering studio for this device...");
-                    showToast("Connecting to Studio on this device...", "info");
-                    quickStudioLogin();
-                } else {
-                    console.error("Login Error:", error?.message || String(error));
-                    const errorMsg = getGoogleLoginErrorMessage(error);
-                    showToast(errorMsg, "error");
-                }
+                console.error("Login Error:", error);
+                showToast(getGoogleLoginErrorMessage(error), "error");
             }
         });
 
-        function updateUserProfileUI(user) {
-            const avatarImg = document.getElementById('user-avatar');
-            const dropAvatar = document.getElementById('dropdown-user-avatar');
-            const navName = document.getElementById('user-nav-name');
-            const dropName = document.getElementById('dropdown-user-name');
-            const dropEmail = document.getElementById('dropdown-user-email');
-            const dropUid = document.getElementById('dropdown-user-uid');
-            const dropBadge = document.getElementById('dropdown-auth-badge');
-
-            if (!user) {
-                if (navName) navName.innerText = 'User';
-                if (avatarImg) avatarImg.src = 'https://ui-avatars.com/api/?name=User&background=8A6D3B&color=fff';
-                return;
-            }
-
-            const name = user.displayName || (user.email ? user.email.split('@')[0] : 'Studio Creator');
-            const email = user.email || 'Direct Studio Session';
-            const photo = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=8A6D3B&color=fff`;
-
-            if (avatarImg) {
-                avatarImg.src = photo;
-                avatarImg.classList.remove('hidden');
-            }
-            if (dropAvatar) dropAvatar.src = photo;
-            if (navName) navName.innerText = name.split(' ')[0];
-            if (dropName) dropName.innerText = name;
-            if (dropEmail) dropEmail.innerText = email;
-            if (dropUid) dropUid.innerText = user.uid ? `${user.uid.substring(0, 14)}...` : 'Local-Session';
-            if (dropBadge) {
-                if (user.isDirectUser || user.isGuest) {
-                    dropBadge.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles text-[9px] mr-1"></i> Studio Session`;
-                } else {
-                    dropBadge.innerHTML = `<i class="fa-solid fa-circle-check text-[9px] mr-1"></i> Google Account`;
-                }
-            }
-        }
-
-        window.toggleProfileDropdown = function(event) {
-            if (event) event.stopPropagation();
-            const dropdown = document.getElementById('profile-dropdown');
-            if (dropdown) {
-                dropdown.classList.toggle('hidden');
-            }
-        };
-
-        window.closeProfileDropdown = function() {
-            const dropdown = document.getElementById('profile-dropdown');
-            if (dropdown) dropdown.classList.add('hidden');
-        };
-
-        document.addEventListener('click', (e) => {
-            const container = document.getElementById('profile-container');
-            if (container && !container.contains(e.target)) {
-                closeProfileDropdown();
-            }
-        });
-
-        window.handleLogout = function() {
-            closeProfileDropdown();
-            sessionStorage.removeItem('wedding_guest_session');
-            currentUser = null;
-            updateUserProfileUI(null);
-            if (auth) {
-                signOut(auth).catch(() => {});
-            }
-            showToast("Signed out successfully", "info");
-            window.location.hash = '#/';
-        };
-
-        // Legal Modal Logic
-        window.openLegalModal = function(tab = 'privacy') {
-            const modal = document.getElementById('modal-legal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                switchLegalTab(tab);
-            }
-        };
-
-        window.closeLegalModal = function() {
-            const modal = document.getElementById('modal-legal');
-            if (modal) {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-        };
-
-        window.switchLegalTab = function(tabName) {
-            const tabs = ['privacy', 'cookies', 'terms'];
-            tabs.forEach(t => {
-                const btn = document.getElementById(`tab-btn-${t}`);
-                const content = document.getElementById(`legal-content-${t}`);
-                if (t === tabName) {
-                    btn?.classList.add('border-brand-600', 'text-brand-700');
-                    btn?.classList.remove('border-transparent', 'text-gray-500');
-                    content?.classList.remove('hidden');
-                } else {
-                    btn?.classList.remove('border-brand-600', 'text-brand-700');
-                    btn?.classList.add('border-transparent', 'text-gray-500');
-                    content?.classList.add('hidden');
-                }
-            });
-        };
-
-        // Close legal modal when clicking on dark backdrop
-        document.getElementById('modal-legal')?.addEventListener('click', (e) => {
-            if (e.target === document.getElementById('modal-legal')) {
-                closeLegalModal();
-            }
-        });
-
-        // Cookie Consent Logic
-        window.acceptAllCookies = function() {
-            try {
-                localStorage.setItem('wedding_cookie_consent', 'accepted');
-            } catch (e) {}
-            dismissCookieBanner();
-            showToast("Cookies accepted", "success");
-        };
-
-        window.dismissCookieBanner = function() {
-            const banner = document.getElementById('cookie-banner');
-            if (banner) {
-                banner.classList.add('hidden');
-            }
-        };
-
-        window.checkCookieConsent = function() {
-            try {
-                const consent = localStorage.getItem('wedding_cookie_consent');
-                if (!consent) {
-                    setTimeout(() => {
-                        const banner = document.getElementById('cookie-banner');
-                        if (banner) banner.classList.remove('hidden');
-                    }, 1200);
-                }
-            } catch (e) {}
-        };
-
-        // Guest / Local Invitations Storage Helpers
-        function getLocalGuestInvitations() {
-            try {
-                const raw = localStorage.getItem('wedding_guest_invitations');
-                return raw ? JSON.parse(raw) : [];
-            } catch (e) {
-                return [];
-            }
-        }
-
-        function saveLocalGuestInvitations(items) {
-            try {
-                localStorage.setItem('wedding_guest_invitations', JSON.stringify(items));
-            } catch (e) {
-                console.error("LocalStorage save error:", e);
-            }
-        }
-
-        function createSampleGuestInvitation() {
-            return {
-                id: 'sample-invitation-01',
-                code: 'sample-invitation-01',
-                ownerUid: currentUser?.uid || 'guest-user',
-                templateId: 'interactive-envelope-slides',
-                status: 'published',
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                couple: {
-                    groom: 'Zain',
-                    bride: 'Sarah',
-                    groomParents: 'Mr. & Mrs. Rahman',
-                    brideParents: 'Mr. & Mrs. Farooq',
-                    groomPhoto: null,
-                    bridePhoto: null,
-                    customInitials: ''
-                },
-                content: {
-                    heading: 'The Wedding Celebration',
-                    message: 'Together with their families, invite you to join them in celebrating their wedding',
-                    invitationMessage: 'Together with their families, invite you to join them in celebrating their wedding',
-                    venueName: 'The Grand Palace',
-                    city: 'Kochi, Kerala',
-                    arabicText: 'وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا',
-                    translation: 'And of His signs is that He created for you from yourselves mates that you may find tranquility in them',
-                    bismillah: 'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ'
-                },
-                mainEvent: {
-                    title: 'Wedding Ceremony & Reception',
-                    date: '2026-12-25',
-                    time: '11:00',
-                    startTime: '11:00',
-                    endTime: '15:00',
-                    venue: 'The Grand Palace Ballroom',
-                    address: 'Marine Drive, Kochi, Kerala',
-                    mapUrl: 'https://maps.google.com',
-                    venueImage: null
-                },
-                settings: {
-                    showBismillah: true,
-                    showHeading: true,
-                    showCouple: true,
-                    showMessage: true,
-                    showQuote: true,
-                    showEvent: true,
-                    showMap: true,
-                    showRsvp: true,
-                    showMusic: false,
-                    showCountdown: true,
-                    showPhotos: false
-                },
-                design: {
-                    colors: {
-                        primary: '#B38A4A',
-                        secondary: '#4A3825',
-                        background: '#FAF7F2',
-                        text: '#1F2937'
-                    },
-                    fonts: {
-                        serif: 'Playfair Display',
-                        sans: 'Poppins'
-                    },
-                    styles: {},
-                    positions: {}
-                }
-            };
-        }
+        document.getElementById('btn-logout')?.addEventListener('click', () => signOut(auth).then(() => window.location.hash = '#/'));
 
         // ================= DASHBOARD =================
         async function loadDashboard() {
             showLoader();
             try {
-                const isFirebaseAuthUser = Boolean(auth?.currentUser && !currentUser?.isGuest && !currentUser?.isDirectUser);
-                if (!isFirebaseAuthUser) {
-                    allInvitationsCache = getLocalGuestInvitations();
-                    if (allInvitationsCache.length === 0) {
-                        const sample = createSampleGuestInvitation();
-                        allInvitationsCache = [sample];
-                        saveLocalGuestInvitations(allInvitationsCache);
-                    }
-                } else {
-                    try {
-                        const q = query(collection(db, "invitations"), where("ownerUid", "==", currentUser.uid));
-                        const snap = await getDocs(q);
-                        allInvitationsCache = [];
-                        snap.forEach(docSnap => allInvitationsCache.push({ id: docSnap.id, ...docSnap.data() }));
-                    } catch (firestoreErr) {
-                        console.warn("Firestore query notice, using local storage:", firestoreErr);
-                        allInvitationsCache = getLocalGuestInvitations();
-                        if (allInvitationsCache.length === 0) {
-                            const sample = createSampleGuestInvitation();
-                            allInvitationsCache = [sample];
-                            saveLocalGuestInvitations(allInvitationsCache);
-                        }
-                    }
-                }
+                const q = query(collection(db, "invitations"), where("ownerUid", "==", currentUser.uid));
+                const snap = await getDocs(q);
+                allInvitationsCache = [];
+                snap.forEach(docSnap => allInvitationsCache.push({ id: docSnap.id, ...docSnap.data() }));
 
                 // Sort descending: most recently updated / created at the top
                 allInvitationsCache.sort((a, b) => {
@@ -2295,7 +1628,9 @@ END:VCALENDAR`;
                 row.innerHTML = `<div class="text-center py-6 w-full text-gray-400 text-sm">No invitations yet. Click a template below or 'Create Blank Canvas' to start.</div>`;
                 return;
             }
-            items.forEach((data) => {
+            // Display exactly up to 4 invitations on the dashboard row for 2x2 initial grid on mobile
+            const displayItems = items.slice(0, 4);
+            displayItems.forEach((data) => {
                 const id = data.id || data.code;
                 const t = state.templates[data.templateId] || state.templates['blank-canvas'];
                 const isPub = data.status === 'published';
@@ -2304,22 +1639,22 @@ END:VCALENDAR`;
                     : (data.couple?.groom || data.couple?.bride || data.mainEvent?.title || t?.name || 'Wedding Invitation');
 
                 row.innerHTML += `
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg transition-all min-w-[260px] max-w-[260px] shrink-0 snap-start">
-                        <div class="h-32 bg-gray-100 bg-cover bg-center border-b border-gray-50 relative" style="background-image: url('${t?.thumb}')">
-                            <div class="absolute top-3 right-3 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase shadow-sm ${isPub ? 'text-green-600' : 'text-gray-500'}">${isPub ? '● Live' : 'Draft'}</div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg transition-all w-full md:min-w-[260px] md:max-w-[260px] md:shrink-0 snap-start">
+                        <div class="h-24 sm:h-32 bg-gray-100 bg-cover bg-center border-b border-gray-50 relative" style="background-image: url('${t?.thumb}')">
+                            <div class="absolute top-2 right-2 bg-white/95 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[8px] sm:text-[10px] font-bold uppercase shadow-sm ${isPub ? 'text-green-600' : 'text-gray-500'}">${isPub ? '● Live' : 'Draft'}</div>
                         </div>
-                        <div class="p-4 flex flex-col flex-grow justify-between">
+                        <div class="p-3 sm:p-4 flex flex-col flex-grow justify-between">
                             <div>
-                                <h3 class="font-serif font-bold text-base text-gray-900 truncate" title="${coupleTitle}">${coupleTitle}</h3>
-                                <p class="text-xs text-gray-400 mt-0.5 truncate">${t?.name || 'Template'}</p>
+                                <h3 class="font-serif font-bold text-sm sm:text-base text-gray-900 truncate" title="${coupleTitle}">${coupleTitle}</h3>
+                                <p class="text-[10px] sm:text-xs text-gray-400 mt-0.5 truncate">${t?.name || 'Template'}</p>
                             </div>
-                            <div class="mt-4 flex flex-col gap-2">
-                                <div class="grid ${isPub ? 'grid-cols-3' : 'grid-cols-2'} gap-1.5">
-                                    <a href="#editor/${id}" class="text-center bg-gray-50 hover:bg-gray-100 text-gray-700 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center" title="Edit Invitation">Edit</a>
-                                    ${isPub ? `<a href="#/i/${id}" target="_blank" class="text-center bg-brand-50 hover:bg-brand-100 text-brand-700 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center" title="View Public Page">View</a>` : ''}
-                                    <button onclick="deleteInvitationById('${id}')" class="text-center bg-red-50 hover:bg-red-100 text-red-600 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center" title="Delete Invitation"><i class="fa-solid fa-trash-can"></i></button>
+                            <div class="mt-3 sm:mt-4 flex flex-col gap-1.5 sm:gap-2">
+                                <div class="grid ${isPub ? 'grid-cols-3' : 'grid-cols-2'} gap-1 sm:gap-1.5">
+                                    <a href="#editor/${id}" class="text-center bg-gray-50 hover:bg-gray-100 text-gray-700 py-1.5 sm:py-2 rounded-xl text-[10px] sm:text-xs font-bold transition flex items-center justify-center" title="Edit Invitation">Edit</a>
+                                    ${isPub ? `<a href="#/i/${id}" target="_blank" class="text-center bg-brand-50 hover:bg-brand-100 text-brand-700 py-1.5 sm:py-2 rounded-xl text-[10px] sm:text-xs font-bold transition flex items-center justify-center" title="View Public Page">View</a>` : ''}
+                                    <button onclick="deleteInvitationById('${id}')" class="text-center bg-red-50 hover:bg-red-100 text-red-600 py-1.5 sm:py-2 rounded-xl text-[10px] sm:text-xs font-bold transition flex items-center justify-center" title="Delete Invitation"><i class="fa-solid fa-trash-can"></i></button>
                                 </div>
-                                ${data.settings?.showRsvp ? `<a href="#rsvp-manager/${id}" class="text-center bg-amber-50 hover:bg-amber-100 text-amber-800 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border border-amber-200/50"><i class="fa-solid fa-users-viewfinder"></i> RSVP Guest List</a>` : ''}
+                                ${data.settings?.showRsvp ? `<a href="#rsvp-manager/${id}" class="text-center bg-amber-50 hover:bg-amber-100 text-amber-800 py-1.5 sm:py-2 rounded-xl text-[9px] sm:text-xs font-bold transition flex items-center justify-center gap-1 sm:gap-1.5 border border-amber-200/50"><i class="fa-solid fa-users-viewfinder"></i> RSVP Guest List</a>` : ''}
                             </div>
                         </div>
                     </div>`;
@@ -2369,12 +1704,12 @@ END:VCALENDAR`;
             
             templates.forEach((t) => {
                 row.innerHTML += `
-                    <div onclick="createNewInvitation('${t.id}')" class="cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:border-brand-300 transition-all w-full md:min-w-[200px] md:max-w-[200px] shrink-0 active:scale-95">
-                        <div class="h-28 sm:h-32 bg-cover bg-center bg-gray-100 relative" style="background-image: url('${t.thumb}')">
+                    <div onclick="createNewInvitation('${t.id}')" class="cursor-pointer bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg hover:border-brand-300 transition-all min-w-[220px] max-w-[220px] shrink-0 snap-start active:scale-95">
+                        <div class="h-32 bg-cover bg-center bg-gray-100 relative" style="background-image: url('${t.thumb}')">
                             ${t.scrollable === false ? `<span class="absolute top-2 left-2 bg-brand-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider shadow-sm"><i class="fa-solid fa-square-poll-horizontal mr-0.5"></i> Slide</span>` : `<span class="absolute top-2 left-2 bg-gray-600 text-white text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider shadow-sm">Scrolling</span>`}
                         </div>
-                        <div class="p-2 sm:p-2.5 text-center">
-                            <h4 class="font-bold text-gray-800 text-xs sm:text-sm truncate">${t.name}</h4>
+                        <div class="p-3 text-center">
+                            <h4 class="font-bold text-gray-800 text-sm truncate">${t.name}</h4>
                         </div>
                     </div>`;
             });
@@ -2400,48 +1735,12 @@ END:VCALENDAR`;
         };
 
         // ================= EDITOR LOGIC =================
-        window.markUnsavedChanges = function() {
-            state.hasUnsavedChanges = true;
-            
-            // Keep header Save button active in solid emerald green without blinking
-            const saveBtn = document.getElementById('btn-header-save');
-            const saveBtnText = document.getElementById('btn-header-save-text');
-            if (saveBtn) {
-                saveBtn.classList.remove('hidden');
-                saveBtn.classList.add('flex');
-                saveBtn.className = "bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 md:px-5 md:py-2 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 ring-2 ring-emerald-500/30";
-            }
-            if (saveBtnText) {
-                saveBtnText.innerText = state.isNew ? "Save Invitation" : "Save Changes";
-            }
-
-            // Also keep sidebar Save button active in solid emerald green
-            const sidebarSaveBtn = document.getElementById('btn-sidebar-save');
-            if (sidebarSaveBtn) {
-                sidebarSaveBtn.className = "bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-sm";
-            }
-
-            // Update badge next to Visual Editor title
-            const badge = document.getElementById('save-status');
-            if (badge) {
-                badge.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1 text-amber-500"></i>Unsaved Changes`;
-                badge.classList.remove('opacity-0');
-                badge.classList.add('opacity-100');
-            }
-        };
-
         function loadNewEditor() {
-            state.hasUnsavedChanges = true;
-            // Show the prominent Save button in header active in green
+            // Show the prominent Save button in header
             const saveBtn = document.getElementById('btn-header-save');
-            const saveBtnText = document.getElementById('btn-header-save-text');
             if (saveBtn) {
                 saveBtn.classList.remove('hidden');
                 saveBtn.classList.add('flex');
-                saveBtn.className = "bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 md:px-5 md:py-2 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 ring-2 ring-emerald-500/30";
-            }
-            if (saveBtnText) {
-                saveBtnText.innerText = "Save Invitation";
             }
 
             // Show Unsaved Template status
@@ -2471,54 +1770,29 @@ END:VCALENDAR`;
         async function loadEditor() {
             showLoader();
             try {
-                let docData = null;
-                const isFirebaseAuthUser = Boolean(auth?.currentUser && !currentUser?.isGuest && !currentUser?.isDirectUser);
-                if (!isFirebaseAuthUser) {
-                    const localItems = getLocalGuestInvitations();
-                    docData = localItems.find(i => i.id === state.editingId || i.code === state.editingId);
-                } else {
-                    try {
-                        const docSnap = await getDoc(doc(db, "invitations", state.editingId));
-                        if (docSnap.exists() && docSnap.data().ownerUid === currentUser.uid) {
-                            docData = docSnap.data();
-                        }
-                    } catch (e) {
-                        console.warn("Firestore read notice, checking local:", e);
-                    }
-                    if (!docData) {
-                        const localItems = getLocalGuestInvitations();
-                        docData = localItems.find(i => i.id === state.editingId || i.code === state.editingId);
-                    }
+                const docSnap = await getDoc(doc(db, "invitations", state.editingId));
+                if (!docSnap.exists() || docSnap.data().ownerUid !== currentUser.uid) {
+                    showToast("Access Denied", "error");
+                    window.location.hash = '#dashboard'; return;
                 }
-
-                if (!docData) {
-                    showToast("Invitation not found", "error");
-                    window.location.hash = '#dashboard';
-                    return;
-                }
-
-                state.data = docData;
+                state.data = docSnap.data();
                 state.isNew = false;
-                state.hasUnsavedChanges = false;
                 if(!state.data.settings) state.data.settings = { showBismillah: true, showHeading: true, showCouple: true, showMessage: true, showQuote: true, showEvent: true, showMap: true, showRsvp: false, showMusic: false, showCountdown: false };
-                if(!state.data.design) state.data.design = {};
                 if(!state.data.design.styles) state.data.design.styles = {};
 
-                // Always keep the Save button clearly active in green with floppy disk icon
+                // Keep the Save button visible and correctly labeled
                 const saveBtn = document.getElementById('btn-header-save');
-                const saveBtnText = document.getElementById('btn-header-save-text');
                 if (saveBtn) {
                     saveBtn.classList.remove('hidden');
                     saveBtn.classList.add('flex');
-                    saveBtn.className = "bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 md:px-5 md:py-2 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 ring-2 ring-emerald-500/30";
-                }
-                if (saveBtnText) {
-                    saveBtnText.innerText = "Save";
+                    saveBtn.classList.remove('bg-amber-600', 'hover:bg-amber-700', 'ring-amber-500/30');
+                    saveBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'ring-emerald-500/30');
+                    saveBtn.innerHTML = `<i class="fa-solid fa-floppy-disk text-xs md:text-sm"></i><span class="text-[8px] md:text-xs leading-none">Save</span>`;
                 }
 
                 const badge = document.getElementById('save-status');
                 if (badge) {
-                    badge.innerHTML = `<i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i>Saved`;
+                    badge.innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-1 text-emerald-600"></i>Saved`;
                     badge.classList.remove('opacity-100');
                     badge.classList.add('opacity-0');
                 }
@@ -2534,106 +1808,6 @@ END:VCALENDAR`;
             } catch(e) { showToast("Error loading editor", "error"); }
             hideLoader();
         }
-
-        window.saveInvitationManually = async function() {
-            if (!currentUser) {
-                showToast("Please sign in or continue as guest to save your invitation", "error");
-                return;
-            }
-            if (!state.data) return;
-
-            showLoader("Saving invitation...");
-            try {
-                state.data.ownerUid = currentUser.uid;
-                state.data.code = state.editingId;
-                state.data.id = state.editingId;
-
-                const isFirebaseAuthUser = Boolean(auth?.currentUser && !currentUser?.isGuest && !currentUser?.isDirectUser);
-
-                const nowIso = new Date().toISOString();
-                if (isFirebaseAuthUser) {
-                    const firestorePayload = {
-                        ...state.data,
-                        createdAt: state.data.createdAt || serverTimestamp(),
-                        updatedAt: serverTimestamp()
-                    };
-                    try {
-                        await setDoc(doc(db, "invitations", state.editingId), firestorePayload);
-                    } catch (firestoreErr) {
-                        console.warn("Firestore save notice, storing locally:", firestoreErr?.message || firestoreErr);
-                    }
-                }
-
-                // Ensure state.data has clean ISO strings for timestamps
-                state.data.createdAt = (typeof state.data.createdAt === 'string' && state.data.createdAt) ? state.data.createdAt : nowIso;
-                state.data.updatedAt = nowIso;
-
-                // Always store in local storage so changes are preserved seamlessly
-                const localData = JSON.parse(JSON.stringify(state.data));
-                const localItems = getLocalGuestInvitations();
-                const idx = localItems.findIndex(i => i.id === state.editingId || i.code === state.editingId);
-                if (idx >= 0) localItems[idx] = localData;
-                else localItems.unshift(localData);
-                saveLocalGuestInvitations(localItems);
-
-                state.isNew = false;
-                state.hasUnsavedChanges = false;
-
-                // Show Saved state on buttons steadily in green
-                const saveBtn = document.getElementById('btn-header-save');
-                const saveBtnText = document.getElementById('btn-header-save-text');
-                if (saveBtn) {
-                    saveBtn.classList.remove('hidden');
-                    saveBtn.classList.add('flex');
-                    saveBtn.className = "bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 md:px-5 md:py-2 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 ring-2 ring-emerald-500/30";
-                }
-                if (saveBtnText) {
-                    saveBtnText.innerText = "Saved";
-                    setTimeout(() => {
-                        if (!state.hasUnsavedChanges && saveBtnText) {
-                            saveBtnText.innerText = "Save";
-                            if (saveBtn) {
-                                saveBtn.className = "bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 md:px-5 md:py-2 rounded-xl text-xs md:text-sm font-bold flex items-center gap-2 transition-all shadow-md active:scale-95 ring-2 ring-emerald-500/30";
-                            }
-                        }
-                    }, 2500);
-                }
-
-                const sidebarSaveBtn = document.getElementById('btn-sidebar-save');
-                if (sidebarSaveBtn) {
-                    sidebarSaveBtn.className = "bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow-sm";
-                }
-
-                // Show Saved badge
-                const badge = document.getElementById('save-status');
-                if (badge) {
-                    badge.innerHTML = `<i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i>Saved`;
-                    badge.classList.remove('opacity-0');
-                    badge.classList.add('opacity-100');
-                    setTimeout(() => {
-                        if (!state.hasUnsavedChanges && badge) {
-                            badge.classList.remove('opacity-100');
-                            badge.classList.add('opacity-0');
-                        }
-                    }, 3000);
-                }
-
-                // Update URL hash smoothly to #editor/${code} without reloading
-                const cleanHash = `#editor/${state.editingId}`;
-                if (window.location.hash !== cleanHash) {
-                    history.replaceState(null, '', cleanHash);
-                }
-
-                showToast("Changes saved successfully!", "success");
-            } catch (err) {
-                console.warn("Save invitation notice:", err?.message || err);
-                showToast("Saved successfully!", "success");
-            } finally {
-                hideLoader();
-            }
-        };
-
-        window.saveFirstTime = window.saveInvitationManually;
 
         window.initializePresentationScripts = function(containerElement, mode) {
             // Presentation mode features are completely removed. Every template works strictly as a single page scrolling layout.
@@ -2789,9 +1963,34 @@ END:VCALENDAR`;
             }
 
             dragTarget = null;
-            updateEditorPreview();
-            markUnsavedChanges();
+            clearTimeout(state.saveTimeout);
+            if (!state.isNew) {
+                state.saveTimeout = setTimeout(saveToFirestore, 500);
+            }
         }
+
+        // ================= PROFILE DROPDOWN FUNCTIONS =================
+        window.toggleProfileDropdown = function(e) {
+            e.stopPropagation();
+            const el = document.getElementById('profile-dropdown');
+            if (el) el.classList.toggle('hidden');
+        };
+
+        window.closeProfileDropdown = function() {
+            const el = document.getElementById('profile-dropdown');
+            if (el) el.classList.add('hidden');
+        };
+
+        // Close dropdown when clicking anywhere else
+        document.addEventListener('click', (e) => {
+            const el = document.getElementById('profile-dropdown');
+            const trigger = document.getElementById('btn-profile-trigger');
+            if (el && !el.classList.contains('hidden')) {
+                if (!el.contains(e.target) && !trigger?.contains(e.target)) {
+                    el.classList.add('hidden');
+                }
+            }
+        });
 
         // ================= MODALS, STYLES & DATA =================
         window.openModal = function(contentId, blockKey = null) {
@@ -2821,7 +2020,10 @@ END:VCALENDAR`;
                 'modal-quran': 'Edit Quote or Verse', 
                 'modal-mainEvent': 'Event Details', 
                 'modal-themes': 'Theme & Background', 
-                'modal-view-all': 'View All' 
+                'modal-view-all': 'View All',
+                'modal-legal-about': 'About Us',
+                'modal-legal-privacy': 'Privacy Policy',
+                'modal-legal-terms': 'Terms of Service'
             };
             document.getElementById('modal-title').innerText = titles[contentId] || 'Edit';
 
@@ -2928,7 +2130,8 @@ END:VCALENDAR`;
             if(c) state.data.design.styles[currentEditKey].color = c; else delete state.data.design.styles[currentEditKey].color;
 
             updateEditorPreview();
-            markUnsavedChanges();
+            clearTimeout(state.saveTimeout);
+            state.saveTimeout = setTimeout(saveToFirestore, 500);
         }
 
         function bindDataToForms() {
@@ -3101,14 +2304,93 @@ END:VCALENDAR`;
             
             updateEditorPreview();
             
-            // Mark as unsaved and activate the Save button. Strictly manual save!
             markUnsavedChanges();
         }
 
-        async function saveToFirestore() {
-            // Point to manual save
-            return saveInvitationManually();
+        function markUnsavedChanges() {
+            const badge = document.getElementById('save-status');
+            if (badge) {
+                if (state.isNew) {
+                    badge.innerHTML = `<i class="fa-solid fa-circle-info mr-1 text-amber-500"></i>Unsaved Template`;
+                } else {
+                    badge.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1 text-amber-500"></i>Unsaved Changes`;
+                }
+                badge.classList.remove('opacity-0');
+                badge.classList.add('opacity-100');
+            }
+            const saveBtn = document.getElementById('btn-header-save');
+            if (saveBtn) {
+                saveBtn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700', 'ring-emerald-500/30');
+                saveBtn.classList.add('bg-amber-600', 'hover:bg-amber-700', 'ring-amber-500/30');
+                if (state.isNew) {
+                    saveBtn.innerHTML = `<i class="fa-solid fa-floppy-disk text-xs md:text-sm"></i><span class="text-[8px] md:text-xs leading-none">Save</span>`;
+                } else {
+                    saveBtn.innerHTML = `<i class="fa-solid fa-floppy-disk text-xs md:text-sm"></i><span class="text-[8px] md:text-xs leading-none">Save</span>`;
+                }
+            }
         }
+
+        window.saveInvitation = async function() {
+            if (!currentUser) {
+                showToast("Please sign in to save your invitation", "error");
+                return;
+            }
+            if (!state.data) return;
+
+            showLoader("Saving invitation changes...");
+            try {
+                state.data.ownerUid = currentUser.uid;
+                state.data.code = state.editingId;
+                
+                if (state.isNew) {
+                    state.data.createdAt = serverTimestamp();
+                }
+                state.data.updatedAt = serverTimestamp();
+
+                // Save or update in Firestore
+                await setDoc(doc(db, "invitations", state.editingId), state.data);
+
+                state.isNew = false;
+
+                // Update cache
+                const index = allInvitationsCache.findIndex(inv => inv.id === state.editingId || inv.code === state.editingId);
+                if (index !== -1) {
+                    allInvitationsCache[index] = { ...state.data, id: state.editingId };
+                } else {
+                    allInvitationsCache.push({ ...state.data, id: state.editingId });
+                }
+
+                // Show Saved status
+                const badge = document.getElementById('save-status');
+                if (badge) {
+                    badge.innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-1 text-emerald-600"></i>Saved`;
+                    badge.classList.remove('opacity-0');
+                    badge.classList.add('opacity-100');
+                    setTimeout(() => badge.classList.remove('opacity-100'), 2500);
+                }
+
+                // Restore green styling on Save button
+                const saveBtn = document.getElementById('btn-header-save');
+                if (saveBtn) {
+                    saveBtn.classList.remove('bg-amber-600', 'hover:bg-amber-700', 'ring-amber-500/30');
+                    saveBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'ring-emerald-500/30');
+                    saveBtn.innerHTML = `<i class="fa-solid fa-floppy-disk text-xs md:text-sm"></i><span class="text-[8px] md:text-xs leading-none">Save</span>`;
+                }
+
+                // Update URL hash smoothly to #editor/${code} without reloading
+                const cleanHash = `#editor/${state.editingId}`;
+                if (window.location.hash !== cleanHash) {
+                    history.replaceState(null, '', cleanHash);
+                }
+
+                showToast("Saved successfully!", "success");
+            } catch (err) {
+                console.error("Save error:", err);
+                showToast("Failed to save. Please try again.", "error");
+            } finally {
+                hideLoader();
+            }
+        };
 
         window.togglePublishStatus = async function(cb) {
             if (state.isNew) {
@@ -3119,23 +2401,10 @@ END:VCALENDAR`;
             const newStatus = cb.checked ? 'published' : 'draft';
             document.getElementById('publish-status-text').innerText = cb.checked ? 'Published' : 'Draft';
             state.data.status = newStatus;
-            state.data.updatedAt = new Date().toISOString();
-
-            const isFirebaseAuthUser = Boolean(auth?.currentUser && !currentUser?.isGuest && !currentUser?.isDirectUser);
-
-            if (isFirebaseAuthUser) {
-                try {
-                    await updateDoc(doc(db, "invitations", state.editingId), { status: newStatus, updatedAt: serverTimestamp() });
-                } catch(e) {
-                    console.warn("Publish status sync notice:", e?.message || e);
-                }
-            }
-
-            const localItems = getLocalGuestInvitations();
-            const idx = localItems.findIndex(i => i.id === state.editingId || i.code === state.editingId);
-            if (idx >= 0) localItems[idx] = state.data;
-            saveLocalGuestInvitations(localItems);
-            showToast(cb.checked ? "Published Live!" : "Reverted to Draft", "success");
+            try {
+                await updateDoc(doc(db, "invitations", state.editingId), { status: newStatus, updatedAt: serverTimestamp() });
+                showToast(cb.checked ? "Published Live!" : "Reverted to Draft", "success");
+            } catch(e) { cb.checked = !cb.checked; showToast("Update failed", "error"); }
         }
 
         window.deleteInvitation = async function() {
@@ -3145,20 +2414,11 @@ END:VCALENDAR`;
                 return;
             }
             if(confirm("Permanently delete this invitation?")) {
-                const isFirebaseAuthUser = Boolean(auth?.currentUser && !currentUser?.isGuest && !currentUser?.isDirectUser);
-                if (isFirebaseAuthUser) {
-                    try {
-                        await deleteDoc(doc(db, "invitations", state.editingId));
-                    } catch(e) {
-                        console.warn("Firestore delete notice, deleting locally:", e?.message || e);
-                    }
-                }
-                let localItems = getLocalGuestInvitations();
-                localItems = localItems.filter(i => i.id !== state.editingId && i.code !== state.editingId);
-                saveLocalGuestInvitations(localItems);
-                closeModal();
-                window.location.hash = '#dashboard';
-                showToast("Invitation deleted", "info");
+                try {
+                    await deleteDoc(doc(db, "invitations", state.editingId));
+                    closeModal();
+                    window.location.hash = '#dashboard';
+                } catch(e) { showToast("Error deleting", "error"); }
             }
         }
 
@@ -3550,34 +2810,16 @@ END:VCALENDAR`;
                     familyDetails = namesList.join(', ');
                 }
 
-                try {
-                    const rsvpsCol = collection(db, "invitations", code, "rsvps");
-                    // Use phone number as document ID to guarantee zero duplicates!
-                    const docRef = doc(rsvpsCol, guestPhone);
-                    await setDoc(docRef, {
-                        name: guestName,
-                        status: status,
-                        additionalCount: status === 'attending' ? additionalCount : 0,
-                        familyDetails: status === 'attending' ? familyDetails : '',
-                        timestamp: serverTimestamp()
-                    });
-                } catch (firestoreErr) {
-                    console.warn("Firestore RSVP save failed, storing locally:", firestoreErr);
-                    const rsvpData = {
-                        id: guestPhone,
-                        name: guestName,
-                        status: status,
-                        additionalCount: status === 'attending' ? additionalCount : 0,
-                        familyDetails: status === 'attending' ? familyDetails : '',
-                        timestamp: new Date().toISOString()
-                    };
-                    const key = `wedding_guest_rsvps_${code}`;
-                    const existing = JSON.parse(localStorage.getItem(key) || '[]');
-                    const idx = existing.findIndex(r => r.id === guestPhone);
-                    if (idx >= 0) existing[idx] = rsvpData;
-                    else existing.push(rsvpData);
-                    localStorage.setItem(key, JSON.stringify(existing));
-                }
+                const rsvpsCol = collection(db, "invitations", code, "rsvps");
+                // Use phone number as document ID to guarantee zero duplicates!
+                const docRef = doc(rsvpsCol, guestPhone);
+                await setDoc(docRef, {
+                    name: guestName,
+                    status: status,
+                    additionalCount: status === 'attending' ? additionalCount : 0,
+                    familyDetails: status === 'attending' ? familyDetails : '',
+                    timestamp: serverTimestamp()
+                });
 
                 showToast("RSVP Submitted Successfully! Thank you.", "success");
                 
@@ -3779,7 +3021,7 @@ END:VCALENDAR`;
 
         function renderViewAllPageList(items, type) {
             const list = document.getElementById('view-all-page-list');
-            list.className = type === 'templates' ? "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
+            list.className = "grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6";
             list.innerHTML = '';
             if (items.length === 0) {
                 list.innerHTML = `<p class="col-span-full text-center text-gray-400 py-12 text-sm">No items found.</p>`;
@@ -3795,32 +3037,32 @@ END:VCALENDAR`;
                     const t = state.templates[data.templateId] || state.templates['blank-canvas'];
                     
                     list.innerHTML += `
-                        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg transition-all">
-                            <div class="h-36 bg-gray-100 bg-cover bg-center border-b border-gray-50 relative" style="background-image: url('${t?.thumb}')">
-                                <div class="absolute top-4 right-4 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase shadow-sm ${isPub ? 'text-green-600' : 'text-gray-500'}">${isPub ? '● Live' : 'Draft'}</div>
+                        <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-lg transition-all w-full">
+                            <div class="h-24 sm:h-36 bg-gray-100 bg-cover bg-center border-b border-gray-50 relative" style="background-image: url('${t?.thumb}')">
+                                <div class="absolute top-2 right-2 sm:top-4 sm:right-4 bg-white/95 backdrop-blur-md px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[8px] sm:text-[10px] font-bold uppercase shadow-sm ${isPub ? 'text-green-600' : 'text-gray-500'}">${isPub ? '● Live' : 'Draft'}</div>
                             </div>
-                            <div class="p-6 flex flex-col flex-grow justify-between">
+                            <div class="p-3 sm:p-6 flex flex-col flex-grow justify-between">
                                 <div>
-                                    <h3 class="font-serif font-bold text-lg text-gray-900 truncate" title="${coupleTitle}">${coupleTitle}</h3>
-                                    <p class="text-xs text-gray-400 mt-0.5 truncate">${t?.name || 'Template'}</p>
+                                    <h3 class="font-serif font-bold text-xs sm:text-lg text-gray-900 truncate" title="${coupleTitle}">${coupleTitle}</h3>
+                                    <p class="text-[9px] sm:text-xs text-gray-400 mt-0.5 truncate">${t?.name || 'Template'}</p>
                                 </div>
-                                <div class="mt-6 flex flex-col gap-2">
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <a href="#editor/${id}" class="text-center bg-gray-50 hover:bg-gray-100 text-gray-700 py-2.5 rounded-xl text-xs font-bold transition">Edit</a>
-                                        ${isPub ? `<a href="#/i/${id}" target="_blank" class="text-center bg-brand-50 hover:bg-brand-100 text-brand-700 py-2.5 rounded-xl text-xs font-bold transition">View</a>` : `<button disabled class="text-center bg-gray-50 text-gray-400 py-2.5 rounded-xl text-xs font-bold opacity-50">Draft</button>`}
+                                <div class="mt-3 sm:mt-6 flex flex-col gap-1.5 sm:gap-2">
+                                    <div class="grid grid-cols-2 gap-1 sm:gap-2">
+                                        <a href="#editor/${id}" class="text-center bg-gray-50 hover:bg-gray-100 text-gray-700 py-1.5 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-bold transition">Edit</a>
+                                        ${isPub ? `<a href="#/i/${id}" target="_blank" class="text-center bg-brand-50 hover:bg-brand-100 text-brand-700 py-1.5 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-bold transition">View</a>` : `<button disabled class="text-center bg-gray-50 text-gray-400 py-1.5 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-bold opacity-50">Draft</button>`}
                                     </div>
-                                    ${data.settings?.showRsvp ? `<a href="#rsvp-manager/${id}" class="text-center bg-amber-50 hover:bg-amber-100 text-amber-800 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 border border-amber-200/50"><i class="fa-solid fa-users-viewfinder"></i> RSVP Guest List</a>` : ''}
-                                    <button onclick="deleteInvitationById('${id}')" class="w-full text-center bg-red-50 hover:bg-red-100 text-red-600 py-2.5 rounded-xl text-xs font-bold transition">Delete Permanent</button>
+                                    ${data.settings?.showRsvp ? `<a href="#rsvp-manager/${id}" class="text-center bg-amber-50 hover:bg-amber-100 text-amber-800 py-1.5 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-bold transition flex items-center justify-center gap-1 sm:gap-1.5 border border-amber-200/50"><i class="fa-solid fa-users-viewfinder"></i> RSVP</a>` : ''}
+                                    <button onclick="deleteInvitationById('${id}')" class="w-full text-center bg-red-50 hover:bg-red-100 text-red-600 py-1.5 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-bold transition">Delete</button>
                                 </div>
                             </div>
                         </div>`;
                 } else {
                     list.innerHTML += `
-                        <div onclick="createNewInvitation('${data.id}')" class="cursor-pointer bg-white p-2.5 sm:p-4 rounded-2xl flex flex-col gap-2 border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95">
-                            <div class="w-full h-28 sm:h-36 rounded-xl bg-cover bg-center" style="background-image: url('${data.thumb}')"></div>
+                        <div onclick="createNewInvitation('${data.id}')" class="cursor-pointer bg-white p-5 rounded-3xl flex flex-col gap-4 border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95">
+                            <div class="w-full h-36 rounded-2xl bg-cover bg-center" style="background-image: url('${data.thumb}')"></div>
                             <div>
-                                <h4 class="font-bold text-gray-800 text-xs sm:text-sm truncate">${data.name}</h4>
-                                <p class="text-[10px] sm:text-xs text-brand-500 font-bold mt-0.5">Use template <i class="fa-solid fa-arrow-right text-[9px] ml-0.5"></i></p>
+                                <h4 class="font-bold text-gray-800 text-base">${data.name}</h4>
+                                <p class="text-xs text-brand-500 font-bold mt-1">Use this template <i class="fa-solid fa-arrow-right text-[10px] ml-1"></i></p>
                             </div>
                         </div>`;
                 }
@@ -3854,55 +3096,24 @@ END:VCALENDAR`;
 
             try {
                 // Fetch the invitation to check access & display couple names
-                let invData = null;
-                if (currentUser?.isGuest) {
-                    const localItems = getLocalGuestInvitations();
-                    invData = localItems.find(i => i.id === code || i.code === code);
-                } else {
-                    try {
-                        const docSnap = await getDoc(doc(db, "invitations", code));
-                        if (docSnap.exists() && docSnap.data().ownerUid === currentUser.uid) {
-                            invData = docSnap.data();
-                        }
-                    } catch (e) {
-                        console.warn("Firestore fetch invitation error:", e);
-                    }
-                    if (!invData) {
-                        const localItems = getLocalGuestInvitations();
-                        invData = localItems.find(i => i.id === code || i.code === code);
-                    }
-                }
-
-                if (!invData) {
+                const docSnap = await getDoc(doc(db, "invitations", code));
+                if (!docSnap.exists() || docSnap.data().ownerUid !== currentUser.uid) {
                     showToast("Access Denied", "error");
                     window.location.hash = '#dashboard';
                     return;
                 }
+                const invData = docSnap.data();
                 const coupleTitle = (invData.couple?.groom && invData.couple?.bride)
                     ? `${invData.couple.groom} & ${invData.couple.bride}`
                     : "Wedding Invitation";
                 document.getElementById('rsvp-manager-title').innerText = `${coupleTitle} — RSVP List`;
 
-                // Fetch rsvps subcollection & local rsvps
+                // Fetch rsvps subcollection
+                const snap = await getDocs(collection(db, "invitations", code, "rsvps"));
                 currentRsvpListCache = [];
-                if (!currentUser?.isGuest) {
-                    try {
-                        const snap = await getDocs(collection(db, "invitations", code, "rsvps"));
-                        snap.forEach(docSnap => {
-                            currentRsvpListCache.push({ id: docSnap.id, ...docSnap.data() });
-                        });
-                    } catch (snapErr) {
-                        console.warn("Firestore fetch rsvps error:", snapErr);
-                    }
-                }
-                try {
-                    const localRsvps = JSON.parse(localStorage.getItem(`wedding_guest_rsvps_${code}`) || '[]');
-                    localRsvps.forEach(lr => {
-                        if (!currentRsvpListCache.some(r => r.id === lr.id)) {
-                            currentRsvpListCache.push(lr);
-                        }
-                    });
-                } catch (e) {}
+                snap.forEach(docSnap => {
+                    currentRsvpListCache.push({ id: docSnap.id, ...docSnap.data() });
+                });
 
                 // Calculate & render stats & table
                 renderRsvpTable(currentRsvpListCache);
@@ -4410,46 +3621,121 @@ END:VCALENDAR`;
             }
         };
 
+        async function preloadTemplateImages(htmlString) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlString;
+            
+            const imgElements = tempDiv.querySelectorAll('img');
+            const bgElements = tempDiv.querySelectorAll('[style*="background-image"]');
+            
+            const promises = [];
+            
+            // Collect standard <img> src
+            imgElements.forEach(img => {
+                if (img.src && !img.src.startsWith('data:image/svg+xml')) {
+                    promises.push(new Promise(resolve => {
+                        const i = new Image();
+                        i.onload = resolve;
+                        i.onerror = resolve; // Continue even if load fails
+                        i.src = img.src;
+                    }));
+                }
+            });
+            
+            // Collect style background-image urls
+            bgElements.forEach(el => {
+                const style = el.getAttribute('style') || '';
+                const match = style.match(/background-image:\s*url\(['"]?([^'")]*)['"]?\)/i);
+                if (match && match[1]) {
+                    promises.push(new Promise(resolve => {
+                        const i = new Image();
+                        i.onload = resolve;
+                        i.onerror = resolve;
+                        i.src = match[1];
+                    }));
+                }
+            });
+            
+            // Wait with a max timeout of 3.5 seconds so we don't block forever if resources are slow
+            if (promises.length > 0) {
+                await Promise.race([
+                    Promise.all(promises),
+                    new Promise(resolve => setTimeout(resolve, 3500))
+                ]);
+            }
+        }
+
         async function loadPublicInvitation(code) {
-            showLoader();
+            showLoader("Loading invitation...");
             try {
-                let data = null;
-                try {
-                    const docSnap = await getDoc(doc(db, "invitations", code));
-                    if (docSnap.exists()) {
-                        data = docSnap.data();
-                    }
-                } catch (e) {
-                    console.warn("Firestore public invitation fetch error, checking local:", e);
-                }
-
-                if (!data) {
-                    const localItems = getLocalGuestInvitations();
-                    data = localItems.find(i => i.id === code || i.code === code);
-                }
-
-                if (!data) {
-                    document.getElementById('renderer-output-public').innerHTML = "<h1 class='text-center mt-20 text-xl font-bold'>Not Found</h1>";
+                const docSnap = await getDoc(doc(db, "invitations", code));
+                if (!docSnap.exists()) {
+                    document.getElementById('renderer-output-public').innerHTML = `
+                        <div class="flex flex-col items-center justify-center min-h-[50dvh] p-8 text-center bg-white rounded-3xl shadow-lg border border-gray-100 max-w-sm mx-auto my-12">
+                            <div class="w-16 h-16 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mb-4 text-2xl shadow-inner">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </div>
+                            <h2 class="font-serif font-bold text-xl text-gray-900 mb-2">Invitation Not Found</h2>
+                            <p class="text-gray-500 text-sm leading-relaxed mb-6">The invitation link you followed seems to be invalid or has been removed. Please verify the URL with the sender.</p>
+                        </div>
+                    `;
                     hideLoader();
                     return;
                 }
+                
+                const data = docSnap.data();
+                
+                // Check if document data is empty or missing crucial template ID
+                if (!data || Object.keys(data).length === 0 || !data.templateId) {
+                    document.getElementById('renderer-output-public').innerHTML = `
+                        <div class="flex flex-col items-center justify-center min-h-[50dvh] p-8 text-center bg-white rounded-3xl shadow-lg border border-gray-100 max-w-sm mx-auto my-12">
+                            <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-4 text-2xl shadow-inner">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <h2 class="font-serif font-bold text-xl text-gray-900 mb-2">Invitation Unavailable</h2>
+                            <p class="text-gray-500 text-sm leading-relaxed mb-6">The wedding invitation is temporarily unavailable or has not been fully configured yet. Please check back later.</p>
+                        </div>
+                    `;
+                    hideLoader();
+                    return;
+                }
+
                 if (data.status !== 'published' && (!currentUser || currentUser.uid !== data.ownerUid)) {
-                     document.getElementById('renderer-output-public').innerHTML = "<h1 class='text-center mt-20 text-xl font-bold text-gray-500'>Private Invitation</h1>";
+                     document.getElementById('renderer-output-public').innerHTML = `
+                        <div class="flex flex-col items-center justify-center min-h-[50dvh] p-8 text-center bg-white rounded-3xl shadow-lg border border-gray-100 max-w-sm mx-auto my-12">
+                            <div class="w-16 h-16 bg-gray-50 text-gray-400 rounded-full flex items-center justify-center mb-4 text-2xl shadow-inner">
+                                <i class="fa-solid fa-lock"></i>
+                            </div>
+                            <h2 class="font-serif font-bold text-xl text-gray-900 mb-2">Private Invitation</h2>
+                            <p class="text-gray-500 text-sm leading-relaxed mb-6">This wedding invitation is currently a draft and is not public yet. Only the author can view it.</p>
+                        </div>
+                     `;
                      hideLoader();
                      return;
                 }
+
+                // Defensive healing of data objects before parsing/rendering
+                if (!data.couple) data.couple = { groom: '', bride: '', groomPhoto: null, bridePhoto: null, customInitials: '' };
+                if (!data.mainEvent) data.mainEvent = { title: '', date: '', time: '', endTime: '', venue: '', address: '', mapUrl: '', venueImage: null };
+                if (!data.content) data.content = { heading: '', message: '', arabicText: '', translation: '', bismillah: '' };
+                if (!data.design) data.design = { colors: {}, styles: {}, bgImage: null, positions: {}, musicUrl: '' };
+                if (!data.design.colors) data.design.colors = {};
+                if (!data.design.styles) data.design.styles = {};
+                if (!data.settings) data.settings = { showBismillah: true, showHeading: true, showCouple: true, showMessage: true, showQuote: true, showEvent: true, showMap: true, showRsvp: false, showMusic: false, showCountdown: false };
+
                 const t = state.templates[data.templateId] || state.templates['blank-canvas'];
                 
                 const parent = document.getElementById('renderer-output-public').parentElement;
                 const grandParent = document.getElementById('view-public');
                 
+                const isActive = grandParent.classList.contains('active');
                 if (t.scrollable === false) {
                     // Non-scrolling slide layouts should occupy 100% viewport and prevent body scrolling
-                    grandParent.className = "view-section absolute inset-0 bg-black flex flex-col items-center justify-center overflow-hidden";
+                    grandParent.className = "view-section absolute inset-0 bg-black flex flex-col items-center justify-center overflow-hidden" + (isActive ? " active" : "");
                     parent.className = "w-full max-w-[480px] h-[100dvh] bg-white relative flex flex-col shadow-2xl mx-auto overflow-hidden";
                 } else {
                     // Scrolling layouts allow scroll
-                    grandParent.className = "view-section absolute inset-0 bg-black flex-col items-center overflow-y-auto";
+                    grandParent.className = "view-section absolute inset-0 bg-black flex-col items-center overflow-y-auto" + (isActive ? " active" : "");
                     parent.className = "w-full max-w-[480px] min-h-[100dvh] bg-white relative flex flex-col shadow-2xl mx-auto overflow-y-auto";
                 }
                 
@@ -4463,6 +3749,10 @@ END:VCALENDAR`;
                         </div>
                     `;
                 }
+
+                // Preload all rendered template images to ensure everything is resolved BEFORE we mount it to the DOM
+                await preloadTemplateImages(renderOutput);
+
                 document.getElementById('renderer-output-public').innerHTML = renderOutput;
 
                 // Run public presentation mode script
@@ -4471,7 +3761,21 @@ END:VCALENDAR`;
                         window.initializePresentationScripts(parent, 'scrolling');
                     }
                 }, 150);
-            } catch (e) { document.getElementById('renderer-output-public').innerHTML = "Error loading."; }
+            } catch (e) { 
+                console.error("Public rendering error: ", e);
+                document.getElementById('renderer-output-public').innerHTML = `
+                    <div class="flex flex-col items-center justify-center min-h-[50dvh] p-8 text-center bg-white rounded-3xl shadow-lg border border-gray-100 max-w-sm mx-auto my-12">
+                        <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-4 text-2xl shadow-inner animate-pulse">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                        </div>
+                        <h2 class="font-serif font-bold text-xl text-gray-900 mb-2">Unable to Load Invitation</h2>
+                        <p class="text-gray-500 text-sm leading-relaxed mb-6">We couldn't retrieve the wedding invitation. Please check your network connection and try again.</p>
+                        <button onclick="window.location.reload()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-md transition active:scale-95 text-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-arrows-rotate animate-spin"></i> Retry Loading
+                        </button>
+                    </div>
+                `;
+            }
             hideLoader();
         }
 
@@ -4540,27 +3844,44 @@ END:VCALENDAR`;
 
         function renderViewAllList(items, type) {
             const list = document.getElementById('view-all-list');
-            list.className = type === 'templates' ? "grid grid-cols-2 gap-3" : "grid grid-cols-1 gap-4";
+            list.className = "grid grid-cols-2 gap-3";
             list.innerHTML = '';
-            if(items.length === 0) { list.innerHTML = `<p class="text-center text-gray-400 py-6 text-sm">No items found.</p>`; return; }
+            if(items.length === 0) { list.innerHTML = `<p class="col-span-2 text-center text-gray-400 py-6 text-sm">No items found.</p>`; return; }
             items.forEach(data => {
                 if(type === 'invitations') {
                     const id = data.id || data.code;
                     const isPub = data.status === 'published';
+                    const t = state.templates[data.templateId] || state.templates['blank-canvas'];
+                    const coupleTitle = (data.couple?.groom && data.couple?.bride)
+                        ? `${data.couple.groom} & ${data.couple.bride}`
+                        : (data.couple?.groom || data.couple?.bride || 'Wedding Invitation');
                     list.innerHTML += `
-                        <div class="bg-gray-50 p-4 rounded-2xl flex items-center justify-between border border-gray-200">
-                            <div><h4 class="font-bold text-gray-800 text-sm">${data.couple?.groom || 'Groom'} & ${data.couple?.bride || 'Bride'}</h4><span class="text-[10px] ${isPub ? 'text-green-600' : 'text-gray-500'} font-bold">${isPub ? '● Published' : 'Draft'}</span></div>
-                            <div class="flex gap-2">
-                                <a href="#editor/${id}" onclick="closeModal()" class="bg-white px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-bold text-gray-700">Edit</a>
-                                ${isPub ? `<a href="#/i/${id}" target="_blank" class="bg-brand-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold">View</a>` : ''}
-                                <button onclick="deleteInvitationById('${id}')" class="bg-red-50 px-3 py-1.5 rounded-xl border border-red-100 text-xs font-bold text-red-600">Delete</button>
+                        <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition w-full">
+                            <div class="h-20 bg-gray-100 bg-cover bg-center border-b border-gray-50 relative" style="background-image: url('${t?.thumb}')">
+                                <div class="absolute top-1.5 right-1.5 bg-white/95 backdrop-blur-md px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase shadow-sm ${isPub ? 'text-green-600' : 'text-gray-500'}">${isPub ? '● Live' : 'Draft'}</div>
+                            </div>
+                            <div class="p-2 sm:p-3 flex flex-col flex-grow justify-between">
+                                <div>
+                                    <h4 class="font-serif font-bold text-[11px] sm:text-xs text-gray-900 truncate" title="${coupleTitle}">${coupleTitle}</h4>
+                                    <p class="text-[9px] text-gray-400 truncate mt-0.5">${t?.name || 'Template'}</p>
+                                </div>
+                                <div class="mt-2 flex flex-col gap-1">
+                                    <div class="grid ${isPub ? 'grid-cols-3' : 'grid-cols-2'} gap-1">
+                                        <a href="#editor/${id}" onclick="closeModal()" class="text-center bg-gray-50 hover:bg-gray-100 text-gray-700 py-1 rounded-lg text-[9px] font-bold transition flex items-center justify-center">Edit</a>
+                                        ${isPub ? `<a href="#/i/${id}" target="_blank" class="text-center bg-brand-50 hover:bg-brand-100 text-brand-700 py-1 rounded-lg text-[9px] font-bold transition flex items-center justify-center">View</a>` : ''}
+                                        <button onclick="deleteInvitationById('${id}')" class="text-center bg-red-50 hover:bg-red-100 text-red-600 py-1 rounded-lg text-[9px] font-bold transition flex items-center justify-center"><i class="fa-solid fa-trash-can"></i></button>
+                                    </div>
+                                </div>
                             </div>
                         </div>`;
                 } else {
                     list.innerHTML += `
-                        <div onclick="createNewInvitation('${data.id}'); closeModal();" class="cursor-pointer bg-gray-50 p-3 rounded-2xl flex items-center gap-4 border border-gray-200 active:scale-95 transition">
-                            <div class="w-16 h-16 rounded-xl bg-cover bg-center shrink-0" style="background-image: url('${data.thumb}')"></div>
-                            <div><h4 class="font-bold text-gray-800 text-sm">${data.name}</h4><p class="text-[10px] text-brand-500 font-bold mt-1">Click to use</p></div>
+                        <div onclick="createNewInvitation('${data.id}'); closeModal();" class="cursor-pointer bg-white p-2 rounded-2xl flex flex-col gap-2 border border-gray-100 hover:shadow-md active:scale-95 transition w-full">
+                            <div class="w-full h-20 rounded-xl bg-cover bg-center shrink-0 border border-gray-50" style="background-image: url('${data.thumb}')"></div>
+                            <div>
+                                <h4 class="font-serif font-bold text-[11px] sm:text-xs text-gray-800 truncate">${data.name}</h4>
+                                <p class="text-[9px] text-brand-500 font-bold mt-0.5">Click to use</p>
+                            </div>
                         </div>`;
                 }
             });
@@ -4569,18 +3890,8 @@ END:VCALENDAR`;
         window.deleteInvitationById = async function(id) {
             if(!confirm('Permanently delete this invitation?')) return;
             try {
-                const isFirebaseAuthUser = Boolean(auth?.currentUser && !currentUser?.isGuest && !currentUser?.isDirectUser);
-                if (isFirebaseAuthUser) {
-                    try {
-                        await deleteDoc(doc(db, 'invitations', id));
-                    } catch (e) {
-                        console.warn("Firestore delete notice, deleting locally:", e?.message || e);
-                    }
-                }
-                let localItems = getLocalGuestInvitations();
-                localItems = localItems.filter(invitation => invitation.id !== id && invitation.code !== id);
-                saveLocalGuestInvitations(localItems);
-                allInvitationsCache = allInvitationsCache.filter(invitation => invitation.id !== id && invitation.code !== id);
+                await deleteDoc(doc(db, 'invitations', id));
+                allInvitationsCache = allInvitationsCache.filter(invitation => invitation.id !== id);
                 renderViewAllList(allInvitationsCache, 'invitations');
                 if (typeof renderViewAllPageList === 'function') {
                     renderViewAllPageList(allInvitationsCache, 'invitations');
@@ -4603,9 +3914,10 @@ END:VCALENDAR`;
 
         window.addEventListener('DOMContentLoaded', async () => {
             // Load templates before initializing routes
-            await loadExternalTemplates();
+            await templatesLoadedPromise;
             setTimeout(handleRoute, 100);
-            setTimeout(checkCookieConsent, 800);
+
+            // Music and WhatsApp share features are completely excluded as requested.
         }); 
     </script>
 </body>

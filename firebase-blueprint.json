@@ -2,121 +2,109 @@
   "entities": {
     "invitation": {
       "title": "Invitation",
-      "description": "Digital wedding invitation entity with couple, event, content, and design settings",
+      "description": "A wedding invitation created by an admin",
       "type": "object",
       "properties": {
-        "code": {
-          "type": "string",
-          "description": "Unique URL slug code for the invitation"
-        },
         "ownerUid": {
           "type": "string",
-          "description": "UID of the user who created the invitation"
+          "description": "UID of the owner"
+        },
+        "code": {
+          "type": "string",
+          "description": "Unique slug/URL code"
         },
         "status": {
           "type": "string",
           "enum": ["draft", "published"],
-          "description": "Publication state of the invitation"
+          "description": "Publish status"
         },
         "templateId": {
           "type": "string",
-          "description": "Visual template identifier"
+          "description": "Selected template ID"
         },
         "couple": {
           "type": "object",
-          "description": "Couple names, parents, photos, and initials"
+          "description": "Details about the wedding couple"
         },
         "mainEvent": {
           "type": "object",
-          "description": "Event ceremony details, date, time, venue, map"
+          "description": "Main event information"
         },
         "content": {
           "type": "object",
-          "description": "Text headings, invitation message, arabic calligraphy"
+          "description": "Heading, message and quotes"
         },
         "design": {
           "type": "object",
-          "description": "Colors, fonts, background images, and layout"
+          "description": "Colors, layout styles and custom background images"
         },
         "settings": {
           "type": "object",
-          "description": "Section visibility toggles"
+          "description": "Toggles for hiding or displaying sections"
+        },
+        "photosQr": {
+          "type": "string",
+          "description": "Base64 image or URL for photos sharing QR"
+        },
+        "photosLink": {
+          "type": "string",
+          "description": "Direct link to photos gallery folder"
         },
         "createdAt": {
           "type": "string",
-          "format": "date-time",
-          "description": "Creation timestamp"
+          "format": "date-time"
         },
         "updatedAt": {
           "type": "string",
-          "format": "date-time",
-          "description": "Last update timestamp"
+          "format": "date-time"
         }
       },
-      "required": ["code", "ownerUid", "status", "templateId"]
+      "required": ["ownerUid", "code", "status", "templateId"]
     },
     "rsvp": {
       "title": "RSVP",
-      "description": "Guest RSVP confirmation for a specific invitation",
+      "description": "Guest RSVP response for an invitation",
       "type": "object",
       "properties": {
         "name": {
           "type": "string",
           "maxLength": 128,
-          "description": "Guest full name"
+          "description": "Guardian/Guest name"
         },
         "phone": {
           "type": "string",
-          "maxLength": 32,
-          "description": "Contact phone number"
+          "maxLength": 10,
+          "description": "10-digit mobile number"
         },
         "status": {
           "type": "string",
           "enum": ["attending", "declined"],
-          "description": "RSVP attendance response"
+          "description": "Attendance choice"
         },
-        "guestsCount": {
-          "type": "number",
-          "description": "Number of guests attending"
+        "additionalCount": {
+          "type": "integer",
+          "description": "Additional guests accompanying"
         },
-        "notes": {
+        "familyDetails": {
           "type": "string",
-          "maxLength": 500,
-          "description": "Optional message or dietary wishes"
+          "description": "Comma-separated list of family member names"
         },
         "createdAt": {
           "type": "string",
-          "format": "date-time",
-          "description": "Submission timestamp"
+          "format": "date-time"
         }
       },
-      "required": ["name", "status"]
-    },
-    "admin": {
-      "title": "Admin",
-      "description": "Super admin user record whose document ID is the Firebase Auth UID",
-      "type": "object",
-      "properties": {
-        "createdAt": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Admin designation timestamp"
-        }
-      }
+      "required": ["name", "phone", "status"]
     }
   },
   "firestore": {
     "/invitations/{invitationId}": {
       "schema": "invitation",
-      "description": "Stores user wedding invitations"
+      "description": "Main collection for storing wedding invitations"
     },
     "/invitations/{invitationId}/rsvps/{rsvpId}": {
       "schema": "rsvp",
-      "description": "Stores guest RSVP responses for a specific invitation"
-    },
-    "/admins/{userId}": {
-      "schema": "admin",
-      "description": "Super admin UID records for elevated privileges"
+      "description": "Subcollection storing RSVP submissions per invitation"
     }
   }
 }
